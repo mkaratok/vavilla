@@ -1,0 +1,291 @@
+@extends('admin.layouts.master')
+
+@section('title', 'Rezervasyon Düzenle - Yönetim Paneli')
+@section('page-title', 'Rezervasyon Düzenle')
+
+@section('breadcrumb')
+<li class="breadcrumb-item"><a href="{{ route('admin.reservations.index') }}">Rezervasyonlar</a></li>
+<li class="breadcrumb-item active">#{{ $reservation->id }}</li>
+@endsection
+
+@section('content')
+<form action="{{ route('admin.reservations.update', $reservation) }}" method="POST">
+    @csrf
+    @method('PUT')
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Rezervasyon Bilgileri</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Villa Seçimi -->
+                    <div class="mb-3">
+                        <label class="form-label">Villa *</label>
+                        <select name="villa_id" id="villa_id" class="form-control select2" required>
+                            <option value="">Villa Seçiniz</option>
+                            @foreach($villas as $villa)
+                                <option value="{{ $villa->id }}" 
+                                    data-price="{{ $villa->fiyat }}"
+                                    {{ old('villa_id', $reservation->villa_id) == $villa->id ? 'selected' : '' }}>
+                                    {{ $villa->baslik }} - {{ number_format($villa->fiyat, 0, ',', '.') }} ₺/gece
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <!-- Tarih Seçimi -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Giriş Tarihi *</label>
+                                <input type="date" name="gelis_tarihi" class="form-control" 
+                                    value="{{ old('gelis_tarihi', $reservation->gelis_tarihi->format('Y-m-d')) }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Çıkış Tarihi *</label>
+                                <input type="date" name="cikis_tarihi" class="form-control" 
+                                    value="{{ old('cikis_tarihi', $reservation->cikis_tarihi->format('Y-m-d')) }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-secondary">
+                        <strong>Gece Sayısı:</strong> {{ $reservation->night_count }} gece
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- Müşteri Bilgileri -->
+                    <h5 class="mb-3">Müşteri Bilgileri</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Ad Soyad *</label>
+                                <input type="text" name="adsoyad" class="form-control" value="{{ old('adsoyad', $reservation->adsoyad) }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">TC Kimlik No</label>
+                                <input type="text" name="tc" class="form-control" value="{{ old('tc', $reservation->tc) }}" maxlength="11">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Telefon *</label>
+                                <input type="text" name="telefon" class="form-control" value="{{ old('telefon', $reservation->telefon) }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">E-posta</label>
+                                <input type="email" name="email" class="form-control" value="{{ old('email', $reservation->email) }}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Adres</label>
+                        <input type="text" name="adres" class="form-control" value="{{ old('adres', $reservation->adres) }}">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Yetişkin Sayısı</label>
+                                <input type="number" name="yetiskin" class="form-control" value="{{ old('yetiskin', $reservation->yetiskin) }}" min="1">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Çocuk Sayısı</label>
+                                <input type="number" name="cocuk" class="form-control" value="{{ old('cocuk', $reservation->cocuk) }}" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Müşteri Notu</label>
+                        <textarea name="notu" class="form-control" rows="3">{{ old('notu', $reservation->notu) }}</textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ek Hizmetler -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Ek Hizmetler</h3>
+                </div>
+                <div class="card-body">
+                    @php
+                        $selectedServices = old('ek_hizmetler', $reservation->ek_hizmetler ?? []);
+                        if (!is_array($selectedServices)) $selectedServices = [];
+                    @endphp
+                    <div class="row">
+                        @foreach($services as $service)
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                <input type="checkbox" name="ek_hizmetler[]" value="{{ $service->id }}" 
+                                    class="form-check-input" id="service_{{ $service->id }}"
+                                    {{ in_array($service->id, $selectedServices) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="service_{{ $service->id }}">
+                                    {{ $service->baslik }}
+                                </label>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Yan Panel -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Ödeme Bilgileri</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Toplam Tutar (₺) *</label>
+                        <input type="number" name="toplam_tutar" class="form-control" 
+                            value="{{ old('toplam_tutar', $reservation->toplam_tutar) }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Ödeme Yöntemi</label>
+                        <select name="odeme_tipi" class="form-control">
+                            <option value="">Seçiniz</option>
+                            @foreach($paymentMethods as $method)
+                                <option value="{{ $method->baslik }}" {{ old('odeme_tipi', $reservation->odeme_tipi) == $method->baslik ? 'selected' : '' }}>
+                                    {{ $method->baslik }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Durum</label>
+                        <select name="durum" class="form-control">
+                            <option value="0" {{ old('durum', $reservation->durum) == '0' ? 'selected' : '' }}>Beklemede</option>
+                            <option value="1" {{ old('durum', $reservation->durum) == '1' ? 'selected' : '' }}>Onaylandı</option>
+                            <option value="2" {{ old('durum', $reservation->durum) == '2' ? 'selected' : '' }}>Tamamlandı</option>
+                            <option value="3" {{ old('durum', $reservation->durum) == '3' ? 'selected' : '' }}>İptal</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" name="harici" value="1" class="form-check-input" id="harici"
+                                {{ old('harici', $reservation->harici) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="harici">Harici Rezervasyon</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Admin Notu</label>
+                        <textarea name="admin_notu" class="form-control" rows="3">{{ old('admin_notu', $reservation->admin_notu) }}</textarea>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary btn-block w-100">
+                        <i class="fas fa-save me-2"></i>Güncelle
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Kayıt Bilgileri -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Kayıt Bilgileri</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Rezervasyon Tarihi:</strong><br>{{ $reservation->rezervasyon_tarihi->format('d.m.Y') }}</p>
+                    <p><strong>IP Adresi:</strong><br>{{ $reservation->ip }}</p>
+                    <p><strong>Oluşturulma:</strong><br>{{ $reservation->created_at?->format('d.m.Y H:i') ?? '-' }}</p>
+                    <p><strong>Güncelleme:</strong><br>{{ $reservation->updated_at?->format('d.m.Y H:i') ?? '-' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@endsection
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('.select2').select2({
+        theme: 'bootstrap-5',
+        width: '100%'
+    });
+    
+    var occupiedDates = [];
+    var currentReservationId = {{ $reservation->id }};
+    
+    // Fetch occupied dates when villa is selected
+    function fetchOccupiedDates() {
+        var villaId = $('#villa_id').val();
+        if (!villaId) {
+            occupiedDates = [];
+            return;
+        }
+        
+        $.ajax({
+            url: '{{ route("admin.reservations.get-occupied-dates") }}',
+            type: 'POST',
+            data: {
+                villa_id: villaId,
+                exclude_reservation_id: currentReservationId,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                occupiedDates = response.occupied || [];
+                updateDatePickerConstraints();
+            }
+        });
+    }
+    
+    // Update date picker constraints
+    function updateDatePickerConstraints() {
+        var gelis = $('input[name="gelis_tarihi"]').val();
+        var cikis = $('input[name="cikis_tarihi"]').val();
+        
+        // Check if selected dates are occupied
+        if (gelis && isDateOccupied(gelis)) {
+            alert('Seçilen giriş tarihi dolu! Lütfen başka bir tarih seçin.');
+            $('input[name="gelis_tarihi"]').val('{{ $reservation->gelis_tarihi->format("Y-m-d") }}');
+        }
+        if (cikis && isDateOccupied(cikis)) {
+            alert('Seçilen çıkış tarihi dolu! Lütfen başka bir tarih seçin.');
+            $('input[name="cikis_tarihi"]').val('{{ $reservation->cikis_tarihi->format("Y-m-d") }}');
+        }
+    }
+    
+    // Check if a date is occupied
+    function isDateOccupied(dateStr) {
+        var date = new Date(dateStr);
+        var formatted = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+        return occupiedDates.includes(formatted);
+    }
+    
+    $('#villa_id').on('change', function() {
+        fetchOccupiedDates();
+    });
+    
+    $('input[name="gelis_tarihi"], input[name="cikis_tarihi"]').on('change', function() {
+        updateDatePickerConstraints();
+    });
+    
+    // Initial fetch
+    fetchOccupiedDates();
+});
+</script>
+@endpush
