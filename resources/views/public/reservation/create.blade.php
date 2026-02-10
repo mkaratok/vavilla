@@ -278,28 +278,6 @@ span.flatpickr-weekday { color: #888 !important; }
 </section>
 @endsection
 
-@push('styles')
-<style>
-.reservation-summary, .sticky-top-custom {
-    background: #1a1a1a;
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    padding: 2rem;
-    position: relative; /* Default */
-    color: #fff;
-    border-radius: 20px;
-    z-index: 90;
-    width: 100%;
-}
-
-.is-sticky {
-    position: fixed !important;
-    top: 140px;
-    z-index: 99;
-}
-</style>
-@endpush
-
 @push('scripts')
 <script>
     // JS Fallback for Sticky Sidebar
@@ -335,107 +313,102 @@ span.flatpickr-weekday { color: #888 !important; }
     });
 
     $(document).ready(function() {
-    var villaId = {{ $villa->id }};
-    var occupiedDates = [];
-    
-    // Get occupied dates
-    $.post('{{ route("api.occupied-dates") }}', { villa_id: villaId }, function(data) {
-        occupiedDates = data.occupied;
-        initDatepickers();
-    }).fail(function() {
-        console.error('Failed to fetch occupied dates');
-        initDatepickers();
-    });
-    
-    function initDatepickers() {
-        const checkinPicker = flatpickr('#gelis_tarihi', {
-            dateFormat: 'Y-m-d',
-            minDate: 'today',
-            defaultDate: 'today',
-            disable: occupiedDates,
-            locale: 'tr',
-            onChange: function(dates, dateStr) {
-                if (dates.length > 0) {
-                    const nextDay = new Date(dates[0]);
-                    nextDay.setDate(nextDay.getDate() + 1);
-                    checkoutPicker.set('minDate', nextDay);
-                    
-                    // Auto open checkout if empty
-                    if ($('#cikis_tarihi').val() === '') {
-                        setTimeout(() => checkoutPicker.open(), 100);
+        var villaId = {{ $villa->id }};
+        
+        // Initialize Datepickers Synchronously (Fast & Reliable)
+        function initDatepickers() {
+            // Check-in Picker
+            const checkinPicker = flatpickr('#gelis_tarihi', {
+                locale: 'tr',
+                dateFormat: 'Y-m-d',
+                minDate: 'today',
+                altInput: true,
+                altFormat: 'd F Y',
+                disableMobile: "true",
+                theme: 'dark',
+                onChange: function(dates, dateStr) {
+                    if (dates.length > 0) {
+                        const nextDay = new Date(dates[0]);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        checkoutPicker.set('minDate', nextDay);
+                        
+                        // Auto open checkout if empty
+                        if ($('#cikis_tarihi').val() === '') {
+                            setTimeout(() => checkoutPicker.open(), 100);
+                        }
                     }
+                    calculatePrice();
                 }
-                calculatePrice();
-            }
-        });
-        
-        const checkoutPicker = flatpickr('#cikis_tarihi', {
-            dateFormat: 'Y-m-d',
-            minDate: 'today',
-            defaultDate: 'today',
-            disable: occupiedDates,
-            locale: 'tr',
-            onChange: function(dates, dateStr) {
-                calculatePrice();
-            }
-        });
-    }
-    
-    // Listen for changes in services and guests
-    $('.service-checkbox, select[name="yetiskin"], select[name="cocuk"]').on('change', function() {
-        calculatePrice();
-    });
-    
-    function calculatePrice() {
-        var gelis = $('#gelis_tarihi').val();
-        var cikis = $('#cikis_tarihi').val();
-        
-        // Show summary even if dates are not selected (with 0 values)
-        $('#summary-details').removeClass('d-none'); // Always show
-        
-        if (!gelis || !cikis) {
-            $('#summary-nights').text('-');
-            $('#summary-total').text('-');
-            $('#summary-prepay').text('-');
-            return;
+            });
+
+            // Check-out Picker
+            const checkoutPicker = flatpickr('#cikis_tarihi', {
+                locale: 'tr',
+                dateFormat: 'Y-m-d',
+                minDate: 'today',
+                altInput: true,
+                altFormat: 'd F Y',
+                disableMobile: "true",
+                theme: 'dark',
+                onChange: function(dates, dateStr) {
+                    calculatePrice();
+                }
+            });
         }
         
-        // Calculate services total
-        var servicesTotal = 0;
-        $('.service-checkbox:checked').each(function() {
-            servicesTotal += parseFloat($(this).data('price'));
+        // Run immediately on load
+        initDatepickers();
+        
+        // Listen for changes
+        $('.service-checkbox, select[name="yetiskin"], select[name="cocuk"]').on('change', function() {
+            calculatePrice();
         });
         
-        $.post('{{ route("api.calculate-price") }}', {
-            villa_id: villaId,
-            gelis: gelis,
-            cikis: cikis
-        }, function(data) {
-            // Add services cost to total
-            var grandTotal = data.total + servicesTotal;
-            var prepayment = (grandTotal * {{ $settings->on_kiralama_bedeli ?? 20 }}) / 100;
+        // Price Calculation Function
+        function calculatePrice() {
+            var gelis = $('#gelis_tarihi').val();
+            var cikis = $('#cikis_tarihi').val();
             
-            // Format currency
-            var formatter = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 0 });
+            $('#summary-details').removeClass('d-none');
             
-            $('#night-count').text(data.nights);
-            $('#total-price').text(formatter.format(grandTotal));
-            $('#prepayment').text(formatter.format(prepayment));
-            $('#price-info').show();
+            if (!gelis || !cikis) {
+                $('#summary-nights').text('-');
+                $('#summary-total').text('-');
+                $('#summary-prepay').text('-');
+                return;
+            }
             
-            $('#summary-nights').text(data.nights + ' gece');
-            $('#summary-total').text(formatter.format(grandTotal));
-            $('#summary-prepay').text(formatter.format(prepayment));
-        });
-    }
-    
-    // Initial Calc
-    if ($('#gelis_tarihi').val() && $('#cikis_tarihi').val()) {
-        calculatePrice();
-    } else {
-        // Ensure summary is visible but empty
-        $('#summary-details').removeClass('d-none');
-    }
-});
+            var servicesTotal = 0;
+            $('.service-checkbox:checked').each(function() {
+                servicesTotal += parseFloat($(this).data('price'));
+            });
+            
+            $.post('{{ route("api.calculate-price") }}', {
+                villa_id: villaId,
+                gelis: gelis,
+                cikis: cikis
+            }, function(data) {
+                var grandTotal = data.total + servicesTotal;
+                var prepayment = (grandTotal * {{ $settings->on_kiralama_bedeli ?? 20 }}) / 100;
+                var formatter = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 0 });
+                
+                $('#night-count').text(data.nights);
+                $('#total-price').text(formatter.format(grandTotal));
+                $('#prepayment').text(formatter.format(prepayment));
+                $('#price-info').show();
+                
+                $('#summary-nights').text(data.nights + ' gece');
+                $('#summary-total').text(formatter.format(grandTotal));
+                $('#summary-prepay').text(formatter.format(prepayment));
+            }).fail(function() {
+                console.error('Price calculation failed');
+            });
+        }
+        
+        // Initial Calc
+        if ($('#gelis_tarihi').val() && $('#cikis_tarihi').val()) {
+            calculatePrice();
+        }
+    });
 </script>
 @endpush
