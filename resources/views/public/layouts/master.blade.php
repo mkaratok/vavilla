@@ -437,11 +437,17 @@
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     
+    <!-- Flatpickr - Using unpkg CDN as alternative -->
+    <link rel="stylesheet" href="https://unpkg.com/flatpickr/dist/flatpickr.min.css">
+    <script src="https://unpkg.com/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+    <script src="https://unpkg.com/flatpickr@4.6.13/dist/l10n/tr.js"></script>
+    
     <script>
+        // Note: Turkish locale for Flatpickr is configured inline in reservation page
+        // to avoid conflicts with global initialization
+    
         // Global AJAX Setup for CSRF Token
         $.ajaxSetup({
             headers: {
@@ -464,15 +470,17 @@
             document.getElementById('main-nav').classList.toggle('active');
         });
         
-        // Initialize Flatpickr (Datepicker)
+        // Initialize Flatpickr (Datepicker) - for generic .datepicker elements
         document.addEventListener('DOMContentLoaded', function() {
-            flatpickr(".datepicker", {
-                locale: "tr",
-                dateFormat: "Y-m-d",
-                minDate: "today",
-                altInput: true,
-                altFormat: "d F Y",
-                theme: "dark"
+            // Only initialize elements with .datepicker class that aren't already initialized
+            var datepickerElements = document.querySelectorAll('.datepicker');
+            datepickerElements.forEach(function(el) {
+                if (!el._flatpickr) {
+                    flatpickr(el, {
+                        dateFormat: "Y-m-d",
+                        minDate: "today"
+                    });
+                }
             });
         });
     </script>

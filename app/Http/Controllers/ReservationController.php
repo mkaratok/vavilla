@@ -167,6 +167,7 @@ class ReservationController extends Controller
             return response()->json(['error' => 'Villa bulunamadı'], 404);
         }
         
+        // Get pending and confirmed reservations
         $reservations = $villa->reservations()
             ->whereIn('durum', [
                 Reservation::STATUS_PENDING,
@@ -177,8 +178,10 @@ class ReservationController extends Controller
         $occupiedDates = [];
         
         foreach ($reservations as $reservation) {
-            $current = $reservation->gelis_tarihi->copy();
-            while ($current->lte($reservation->cikis_tarihi)) {
+            $current = Carbon::parse($reservation->gelis_tarihi);
+            $endDate = Carbon::parse($reservation->cikis_tarihi);
+            
+            while ($current->lt($endDate)) {
                 $occupiedDates[] = $current->format('Y-m-d');
                 $current->addDay();
             }
