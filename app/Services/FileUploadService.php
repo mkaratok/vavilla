@@ -23,8 +23,31 @@ class FileUploadService
         $path = $directory . '/' . $filename;
         
         // Get image info
-        $imageInfo = getimagesize($file->getPathname());
+        $imageInfo = @getimagesize($file->getPathname());
         $mimeType = $imageInfo['mime'] ?? $file->getMimeType();
+        
+        // Check if image is too large for GD processing
+        if ($imageInfo) {
+            $width = $imageInfo[0];
+            $height = $imageInfo[1];
+            $pixels = $width * $height;
+            
+            // If image is extremely large (>50MP), use direct storage without processing
+            if ($pixels > 50000000) { // 50 megapixels
+                \Log::info('Image too large for GD processing, storing directly', [
+                    'width' => $width,
+                    'height' => $height,
+                    'pixels' => $pixels
+                ]);
+                $storedPath = $file->storeAs($directory, $filename, 'public');
+                return [
+                    'path' => $storedPath,
+                    'url' => Storage::url($storedPath),
+                    'filename' => $filename,
+                    'thumbnail' => null,
+                ];
+            }
+        }
         
         // Create image resource based on mime type
         $sourceImage = $this->createImageFromFile($file->getPathname(), $mimeType);

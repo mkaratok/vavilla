@@ -42,7 +42,10 @@
             <div class="card-body">
                 <div class="mb-3">
                     <input type="file" id="gallery-upload" accept="image/*" class="form-control" multiple>
-                    <small class="text-muted">Birden fazla resim seçebilirsiniz. Yüksek kaliteli resimler desteklenir.</small>
+                    <small class="text-muted d-block mt-1">
+                        <i class="fas fa-info-circle"></i> Birden fazla resim seçebilirsiniz.<br>
+                        <i class="fas fa-exclamation-triangle text-warning"></i> Maksimum dosya boyutu: 20MB, Önerilen boyut: 4000x4000 piksel altı
+                    </small>
                 </div>
                 
                 <div class="row" id="gallery-container">

@@ -76,12 +76,10 @@ class PhotoGalleryController extends Controller
     public function uploadImage(Request $request, PhotoGallery $gallery)
     {
         // Increase memory limit for large image processing
-        ini_set('memory_limit', '512M');
-        ini_set('post_max_size', '512M');
-        ini_set('upload_max_filesize', '512M');
+        ini_set('memory_limit', '1024M');
 
         $request->validate([
-            'images.*' => 'required|image|max:102400', // 100MB per file
+            'images.*' => 'required|image|max:20480', // 20MB per file - reduced for memory safety
         ]);
 
         $uploadService = app(FileUploadService::class);
@@ -90,28 +88,56 @@ class PhotoGalleryController extends Controller
         
         $files = $request->file('images');
         $uploadedCount = 0;
+        $errors = [];
 
         if ($request->hasFile('images')) {
             foreach($files as $file) {
                 try {
+                    // Check file size and dimensions before processing
+                    $imageInfo = @getimagesize($file->getPathname());
+                    if ($imageInfo) {
+                        $width = $imageInfo[0];
+                        $height = $imageInfo[1];
+                        // If image is very large, estimate memory needed (4 bytes per pixel * 2 for processing)
+                        $estimatedMemory = $width * $height * 4 * 2;
+                        if ($estimatedMemory > 500 * 1024 * 1024) { // 500MB
+                            \Log::warning('Image too large for memory processing', [
+                                'width' => $width,
+                                'height' => $height,
+                                'estimated_memory' => $estimatedMemory
+                            ]);
+                            $errors[] = $file->getClientOriginalName() . ' çok büyük boyutlu (önerilen max: 4000x4000 piksel)';
+                            continue;
+                        }
+                    }
+
                     $result = $uploadService->uploadImage($file, 'gallery');
+
+                    // If thumbnail wasn't created, use the original filename for kresim too
+                    $kresim = $result['thumbnail'] ? basename($result['thumbnail']) : $result['filename'];
 
                     PhotoGalleryImage::create([
                         'gallery_id' => $gallery->id,
                         'bresim' => $result['filename'],
-                        'kresim' => $result['thumbnail'] ? basename($result['thumbnail']) : $result['filename'],
+                        'kresim' => $kresim,
                     ]);
                     $uploadedCount++;
                 } catch (\Exception $e) {
                     \Log::error('Image upload failed: ' . $e->getMessage());
+                    $errors[] = $file->getClientOriginalName() . ' yüklenemedi: ' . $e->getMessage();
                     continue;
                 }
             }
         }
 
+        $message = $uploadedCount . ' resim başarıyla yüklendi.';
+        if (count($errors) > 0) {
+            $message .= ' Hatalar: ' . implode(', ', $errors);
+        }
+
         return response()->json([
-            'success' => true, 
-            'message' => $uploadedCount . ' resim başarıyla yüklendi.'
+            'success' => $uploadedCount > 0,
+            'message' => $message
         ]);
     }
 

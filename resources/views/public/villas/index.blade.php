@@ -9,7 +9,7 @@
     <div class="overlay" style="position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5);"></div>
     <div class="container h-100 position-relative z-2 d-flex flex-column align-items-center justify-content-center text-center">
         <div class="text-warning mb-2" style="font-size: 14px; letter-spacing: 3px; text-transform: uppercase;">The Cappa</div> <!-- Static from design, can be dynamic -->
-        <h1 class="display-3 text-white font-cormorant fw-bold">Rooms & Suites</h1>
+        <h1 class="display-3 text-white font-cormorant fw-bold">Odalar & Villalar</h1>
     </div>
 </section>
 
@@ -74,7 +74,7 @@
 <section class="search-section py-5" style="background-color: #0b0b0b;">
     <div class="container">
         <div class="text-center mb-5">
-            <div class="text-warning small mb-2">CHECK AVAILABILITY</div>
+            <div class="text-warning small mb-2">Müsaitlik Kontrol Et</div>
             <h2 class="text-white font-cormorant">Search Rooms</h2>
         </div>
         
@@ -111,11 +111,11 @@
     </div>
 </section>
 
-<!-- 4. Extra Services -->
+<!-- 4. Ek Hizmetler -->
 <section class="extras-section py-5" style="background-color: #111;">
     <div class="container py-5">
-        <div class="text-warning small mb-2">BEST PRICES</div>
-        <h2 class="text-white font-cormorant mb-5">Extra Services</h2>
+        <div class="text-warning small mb-2">En İyi Fiyat</div>
+        <h2 class="text-white font-cormorant mb-5">Ek Hizmetler</h2>
         
         <div class="row">
             <div class="col-md-6 mb-4">
@@ -124,7 +124,7 @@
                         <img src="{{ asset('images/about-1.jpg') }}" class="w-100 h-100" style="object-fit: cover;">
                     </div>
                     <div class="extra-content p-4 w-50">
-                        <h4 class="font-cormorant">Room Cleaning</h4>
+                        <h4 class="font-cormorant">Ek Temizlik Hizmeti</h4>
                         <div class="price text-warning mb-3">500 ₺ <span class="text-muted small">/ aylık</span></div>
                         <ul class="list-unstyled text-white-50 small mb-0">
                             <li><i class="fas fa-check text-warning me-2"></i> Günlük Temizlik</li>
@@ -139,7 +139,7 @@
                         <img src="{{ asset('images/about-2.jpg') }}" class="w-100 h-100" style="object-fit: cover;">
                     </div>
                     <div class="extra-content p-4 w-50">
-                        <h4 class="font-cormorant">Drinks Included</h4>
+                        <h4 class="font-cormorant">Dolu Minibar</h4>
                         <div class="price text-warning mb-3">300 ₺ <span class="text-muted small">/ günlük</span></div>
                         <ul class="list-unstyled text-white-50 small mb-0">
                             <li><i class="fas fa-check text-warning me-2"></i> Minibar Kullanımı</li>

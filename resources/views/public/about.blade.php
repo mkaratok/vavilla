@@ -18,15 +18,13 @@
         <div class="row align-items-center mb-5">
             <div class="col-lg-6">
                 <div class="about-image">
-                    <img src="{{ asset('images/about-1.jpg') }}" alt="Vellura Çeşme" class="img-fluid rounded">
+                    <img src="{{ $about && $about->image_1 ? asset('storage/about/' . $about->image_1) : asset('images/about-1.jpg') }}" alt="{{ $about->baslik ?? 'Vellura Çeşme' }}" class="img-fluid rounded">
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="about-text">
-                    <h2>Vellura Çeşme</h2>
-                    <p>Her biri bir çiçeğin zarafetiyle adlandırılmış villalarımızla, misafirlerimize ev konforunda, huzurlu ve unutulmaz bir tatil deneyimi sunmak için yola çıktık.</p>
-                    <p>Begonvil, Petunya, Orkide, Papatya, Ortanca ve Menekşe isimlerini taşıyan villalarımız; sadece bir konaklama alanı değil, aynı zamanda her detayında özen ve sevgiyle hazırlanmış özel yaşam alanlarıdır.</p>
-                    <p>Çeşme'nin eşsiz güzelliğinde, doğayla iç içe, lüks ve konforun buluştuğu villalarımızda sizi ağırlamaktan mutluluk duyarız.</p>
+                    <h2>{{ $about->baslik ?? 'Vellura Çeşme' }}</h2>
+                    {!! $about->icerik ?? '<p>Her biri bir çiçeğin zarafetiyle adlandırılmış villalarımızla, misafirlerimize ev konforunda, huzurlu ve unutulmaz bir tatil deneyimi sunmak için yola çıktık.</p><p>Begonvil, Petunya, Orkide, Papatya, Ortanca ve Menekşe isimlerini taşıyan villalarımız; sadece bir konaklama alanı değil, aynı zamanda her detayında özen ve sevgiyle hazırlanmış özel yaşam alanlarıdır.</p><p>Çeşme\'nin eşsiz güzelliğinde, doğayla iç içe, lüks ve konforun buluştuğu villalarımızda sizi ağırlamaktan mutluluk duyarız.</p>' !!}
                 </div>
             </div>
         </div>
@@ -34,7 +32,7 @@
         <div class="row align-items-center">
             <div class="col-lg-6 order-lg-2">
                 <div class="about-image">
-                    <img src="{{ asset('images/about-2.jpg') }}" alt="Vellura Çeşme" class="img-fluid rounded">
+                    <img src="{{ $about && $about->image_2 ? asset('storage/about/' . $about->image_2) : asset('images/about-2.jpg') }}" alt="{{ $about->baslik ?? 'Vellura Çeşme' }}" class="img-fluid rounded">
                 </div>
             </div>
             <div class="col-lg-6 order-lg-1">

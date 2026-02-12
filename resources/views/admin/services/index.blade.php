@@ -23,6 +23,8 @@
                 <tr>
                     <th width="50">ID</th>
                     <th>Hizmet Adı</th>
+                    <th>Fiyat</th>
+                    <th>İkon</th>
                     <th width="150">İşlemler</th>
                 </tr>
             </thead>
@@ -31,6 +33,14 @@
                 <tr>
                     <td>{{ $service->id }}</td>
                     <td>{{ $service->baslik }}</td>
+                    <td>{{ $service->fiyat ? number_format($service->fiyat, 2, ',', '.') . ' ₺' : '-' }}</td>
+                    <td>
+                        @if($service->ikon)
+                            <i class="{{ $service->ikon }}"></i> {{ $service->ikon }}
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td>
                         <a href="{{ route('admin.services.edit', $service) }}" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i>
@@ -46,7 +56,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="3" class="text-center">Henüz hizmet eklenmemiş.</td>
+                    <td colspan="5" class="text-center">Henüz hizmet eklenmemiş.</td>
                 </tr>
                 @endforelse
             </tbody>

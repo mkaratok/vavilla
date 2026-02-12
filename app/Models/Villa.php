@@ -61,7 +61,7 @@ class Villa extends Model
         return $seasonalPrice ? $seasonalPrice->fiyat : $this->fiyat;
     }
 
-    // Check availability for date range
+    // Müsaitlik Kontrol Et for date range
     public function isAvailable($startDate, $endDate)
     {
         return !$this->reservations()

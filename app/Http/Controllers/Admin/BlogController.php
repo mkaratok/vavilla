@@ -27,6 +27,7 @@ class BlogController extends Controller
             'baslik' => 'required|string|max:255',
             'icerik' => 'required',
             'resim' => 'nullable|image|max:2048',
+            'kategori' => 'nullable|string|max:255',
         ]);
 
         $data = $request->except(['resim']);
@@ -35,6 +36,7 @@ class BlogController extends Controller
         $data['durum'] = $request->has('durum') ? 1 : 0;
         $data['anasayfa'] = $request->has('anasayfa') ? 1 : 0;
         $data['okunma'] = 0;
+        $data['kategori'] = $request->input('kategori') ?? null;
 
         if ($request->hasFile('resim')) {
             $uploadService = app(FileUploadService::class);

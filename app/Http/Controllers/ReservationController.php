@@ -61,7 +61,7 @@ class ReservationController extends Controller
             return back()->with('error', "Bu villa minimum {$villa->minimum_kiralama_suresi} gece kiralanabilir.");
         }
         
-        // Check availability
+        // Müsaitlik Kontrol Et
         if (!$villa->isAvailable($request->gelis_tarihi, $request->cikis_tarihi)) {
             return back()->with('error', 'Seçilen tarihler için villa müsait değil.');
         }
@@ -112,7 +112,7 @@ class ReservationController extends Controller
         ]);
     }
 
-    // AJAX: Check availability
+    // AJAX: Müsaitlik Kontrol Et
     public function checkAvailability(Request $request)
     {
         $villa = Villa::find($request->villa_id);

@@ -88,20 +88,20 @@
                     </div>
                     
                     <div class="col-12">
-                        <div class="alert alert-dark border-start border-warning border-4 text-white-50 small">
+                        <div class="alert alert-dark border-start border-warning border-4 text-black-50 small">
                             <i class="fas fa-info-circle text-warning me-2"></i>
                             Giriş talimatları varıştan 5 gün önce e-posta ile gönderilecektir. Resepsiyon personeli sizi karşılayacaktır.
                         </div>
                     </div>
                 </div>
 
-                <a href="#booking-form" class="btn btn-gold px-5 py-3">CHECK AVAILABILITY</a>
+                <a href="#booking-form" class="btn btn-gold px-5 py-3">Müsaitlik Kontrol Et</a>
             </div>
 
-            <!-- Right Column: Amenities -->
+            <!-- Right Column: İmkanlar -->
             <div class="col-lg-4 mt-5 mt-lg-0">
                 <div class="ps-lg-5">
-                    <h4 class="text-white font-cormorant mb-4">Amenities</h4>
+                    <h4 class="text-white font-cormorant mb-4">İmkanlar</h4>
                     
                     <div class="row g-3">
                         <div class="col-12 mb-3">
@@ -204,46 +204,42 @@
 </section>
 @endif
 
-<!-- 4. Extra Services -->
+<!-- 4. Ek Hizmetler -->
+@if(isset($villaServices) && (is_countable($villaServices) ? count($villaServices) > 0 : false))
 <section class="extras-section py-5" style="background-color: #111;">
     <div class="container py-5">
-        <div class="text-warning small mb-2">BEST PRICES</div>
-        <h2 class="text-white font-cormorant mb-5">Extra Services</h2>
-        
+        <div class="text-warning small mb-2">En İyi Fiyat</div>
+        <h2 class="text-white font-cormorant mb-5">Ek Hizmetler</h2>
+
         <div class="row">
+            @foreach($villaServices as $service)
             <div class="col-md-6 mb-4">
                 <div class="extra-card d-flex align-items-center bg-dark text-white p-0">
                     <div class="extra-img w-50" style="height: 250px;">
-                        <img src="{{ asset('images/about-1.jpg') }}" class="w-100 h-100" style="object-fit: cover;">
+                        @if($service->ikon)
+                            <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, rgba(197, 164, 126, 0.2) 0%, rgba(0,0,0,0.5) 100%);">
+                                <i class="{{ $service->ikon }} fa-5x text-warning"></i>
+                            </div>
+                        @else
+                            <img src="{{ asset('images/about-1.jpg') }}" class="w-100 h-100" style="object-fit: cover;">
+                        @endif
                     </div>
                     <div class="extra-content p-4 w-50">
-                        <h4 class="font-cormorant">Room Cleaning</h4>
-                        <div class="price text-warning mb-3">500 ₺ <span class="text-muted small">/ aylık</span></div>
-                        <ul class="list-unstyled text-white-50 small mb-0">
-                            <li><i class="fas fa-check text-warning me-2"></i> Günlük Temizlik</li>
-                            <li><i class="fas fa-check text-warning me-2"></i> Havlu Değişimi</li>
-                        </ul>
+                        <h4 class="font-cormorant">{{ $service->baslik }}</h4>
+                        @if($service->fiyat > 0)
+                            <div class="price text-warning mb-3">{{ number_format($service->fiyat, 0, ',', '.') }} ₺</div>
+                        @endif
+                        @if($service->aciklama)
+                            <p class="text-white-50 small mb-0">{{ $service->aciklama }}</p>
+                        @endif
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 mb-4">
-                <div class="extra-card d-flex align-items-center bg-dark text-white p-0">
-                    <div class="extra-img w-50" style="height: 250px;">
-                        <img src="{{ asset('images/about-2.jpg') }}" class="w-100 h-100" style="object-fit: cover;">
-                    </div>
-                    <div class="extra-content p-4 w-50">
-                        <h4 class="font-cormorant">Drinks Included</h4>
-                        <div class="price text-warning mb-3">300 ₺ <span class="text-muted small">/ günlük</span></div>
-                        <ul class="list-unstyled text-white-50 small mb-0">
-                            <li><i class="fas fa-check text-warning me-2"></i> Minibar Kullanımı</li>
-                            <li><i class="fas fa-check text-warning me-2"></i> Sıcak İçecekler</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
+@endif
 
 <!-- 5. Booking Form -->
 <section id="booking-form" class="bottom-area py-5" style="background-color: #111; background-image: url('{{ asset('images/hero-bg.jpg') }}'); background-attachment: fixed; position: relative;">
@@ -255,13 +251,13 @@
                 <div class="mb-4 text-warning">
                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                 </div>
-                <h3 class="font-cormorant mb-4 line-height-1-4">Each of our guest rooms feature a private bath, wi-fi, cable television and include full breakfast.</h3>
+                <h3 class="font-cormorant mb-4 line-height-1-4">Otelimizin her odasında özel banyo, Wi-Fi, kablolu televizyon bulunmaktadır ve kahvaltı fiyata dahildir.</h3>
                 <div class="d-flex align-items-center mt-5">
                     <div class="video-btn d-flex align-items-center gap-3 cursor-pointer">
                         <div class="play-icon border border-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
                             <i class="fas fa-play text-warning"></i>
                         </div>
-                        <span class="text-uppercase small letter-spacing-2">Play Video</span>
+                        <span class="text-uppercase small letter-spacing-2">Videoyu Oynat</span>
                     </div>
                 </div>
             </div>
@@ -269,8 +265,8 @@
             <!-- Booking Form -->
             <div class="col-lg-5 offset-lg-1">
                 <div class="booking-form p-5" style="background-color: #0c0c0c; border: 1px solid rgba(255,255,255,0.1);">
-                    <div class="text-warning small mb-2 text-uppercase letter-spacing-2">Hotel Booking Form</div>
-                    <h3 class="text-white font-cormorant mb-4">Hotel Booking Form</h3>
+                    <div class="text-warning small mb-2 text-uppercase letter-spacing-2">Rezervasyon Formu</div>
+                    <h3 class="text-white font-cormorant mb-4">Rezervasyon Formu</h3>
                     
                     <form action="{{ route('reservation.create', $villa->sef) }}" method="GET">
                         <div class="mb-3">

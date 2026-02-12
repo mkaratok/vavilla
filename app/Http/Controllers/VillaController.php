@@ -7,6 +7,7 @@ use App\Models\Setting;
 use App\Models\Villa;
 use App\Models\VillaType;
 use App\Models\CustomerReview;
+use App\Models\AdditionalService;
 use Illuminate\Http\Request;
 
 class VillaController extends Controller
@@ -117,11 +118,18 @@ class VillaController extends Controller
         // Calculate average rating
         $avgRating = $villa->reviews->avg('ortalama') ?? 0;
         
+        // Get selected additional services for this villa
+        $villaServices = [];
+        if ($villa->ek_hizmetler && is_array($villa->ek_hizmetler)) {
+            $villaServices = AdditionalService::whereIn('id', $villa->ek_hizmetler)->get();
+        }
+        
         return view('public.villas.show', [
             'settings' => $settings,
             'villa' => $villa,
             'similarVillas' => $similarVillas,
             'avgRating' => round($avgRating, 1),
+            'villaServices' => $villaServices,
         ]);
     }
 

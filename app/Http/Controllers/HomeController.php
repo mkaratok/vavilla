@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\About;
 use App\Models\Blog;
 use App\Models\Region;
 use App\Models\Setting;
@@ -16,11 +17,13 @@ class HomeController extends Controller
     public function index()
     {
         $settings = Setting::instance();
+        $about = About::first();
         
         return view('public.home', [
             'settings' => $settings,
-            'villas' => ($villas = Villa::homepage()->with('region', 'images')->limit(6)->get())->isEmpty() 
-                ? Villa::active()->with('region', 'images')->latest()->limit(6)->get() 
+            'about' => $about,
+            'villas' => ($villas = Villa::homepage()->with('region', 'images')->limit(6)->get())->isEmpty()
+                ? Villa::active()->with('region', 'images')->latest()->limit(6)->get()
                 : $villas,
             'allVillas' => Villa::active()->get(),
             'regions' => Region::withCount('villas')->get(),
@@ -33,7 +36,8 @@ class HomeController extends Controller
     public function about()
     {
         $settings = Setting::instance();
-        return view('public.about', compact('settings'));
+        $about = About::first();
+        return view('public.about', compact('settings', 'about'));
     }
 
     public function contact()

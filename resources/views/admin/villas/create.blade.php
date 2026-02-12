@@ -127,20 +127,39 @@
                     <h3 class="card-title">Ek Hizmetler</h3>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        @foreach($services as $service)
-                        <div class="col-md-4">
-                            <div class="form-check mb-2">
-                                <input type="checkbox" name="ek_hizmetler[]" value="{{ $service->id }}" 
-                                    class="form-check-input" id="service_{{ $service->id }}"
-                                    {{ in_array($service->id, old('ek_hizmetler', [])) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="service_{{ $service->id }}">
-                                    {{ $service->baslik }}
-                                </label>
+                    @if($services->count() > 0)
+                        <div class="row">
+                            @foreach($services as $service)
+                            <div class="col-md-6 mb-3">
+                                <div class="border rounded p-3 {{ in_array($service->id, old('ek_hizmetler', [])) ? 'bg-light border-primary' : '' }}">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="ek_hizmetler[]" value="{{ $service->id }}" 
+                                            class="form-check-input" id="service_{{ $service->id }}"
+                                            {{ in_array($service->id, old('ek_hizmetler', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label w-100" for="service_{{ $service->id }}">
+                                            <div class="d-flex align-items-start gap-2">
+                                                @if($service->ikon)
+                                                    <i class="{{ $service->ikon }} text-primary" style="font-size: 1.5rem; min-width: 30px;"></i>
+                                                @endif
+                                                <div class="flex-grow-1">
+                                                    <strong>{{ $service->baslik }}</strong>
+                                                    @if($service->fiyat)
+                                                        <span class="badge bg-warning text-dark ms-2">{{ number_format($service->fiyat, 0, ',', '.') }} ₺</span>
+                                                    @endif
+                                                    @if($service->aciklama)
+                                                        <div class="text-muted small mt-1">{{ Str::limit($service->aciklama, 80) }}</div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
+                            @endforeach
                         </div>
-                        @endforeach
-                    </div>
+                    @else
+                        <p class="text-muted">Henüz ek hizmet eklenmemiş. <a href="{{ route('admin.services.create') }}">Yeni hizmet ekleyin</a></p>
+                    @endif
                 </div>
             </div>
         </div>

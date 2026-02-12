@@ -4,18 +4,51 @@
 
 @push('styles')
 <style>
-.reservation-summary, .sticky-top-custom {
+/* Sticky Sidebar Styles */
+.sidebar-sticky-wrapper {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 20px;
+    z-index: 90;
+    align-self: flex-start;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar for Sidebar */
+.sidebar-sticky-wrapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-sticky-wrapper::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+}
+
+.sidebar-sticky-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(197, 164, 126, 0.3);
+    border-radius: 10px;
+}
+
+.sidebar-sticky-wrapper::-webkit-scrollbar-thumb:hover {
+    background: rgba(197, 164, 126, 0.5);
+}
+
+.reservation-summary {
     background: #1a1a1a;
     border: 1px solid rgba(255,255,255,0.1);
     box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     padding: 2rem;
-    position: -webkit-sticky; /* Safari */
-    position: sticky;
-    top: 140px; /* Increased to avoid header overlap */
     color: #fff;
     border-radius: 20px;
-    z-index: 90;
-    width: 100%; /* Ensure full width */
+    width: 100%;
+}
+
+/* Ensure the row allows sticky to work */
+.reservation-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
 }
 .villa-mini-card {
     display: flex;
@@ -87,7 +120,7 @@ span.flatpickr-weekday { color: rgba(197, 164, 126, 0.6) !important; font-size: 
         
         <form action="{{ route('reservation.store', $villa->sef) }}" method="POST" id="reservation-form">
             @csrf
-            <div class="row">
+            <div class="row reservation-row">
                 <div class="col-lg-8">
                     <!-- Tarih Seçimi -->
                     <div class="card border-secondary border-opacity-25 shadow-sm mb-4" style="background-color: #1a1a1a; border-radius: 15px;">
@@ -217,18 +250,30 @@ span.flatpickr-weekday { color: rgba(197, 164, 126, 0.6) !important; font-size: 
                             <h5 class="fw-bold mb-4 text-white"><i class="fas fa-concierge-bell text-warning me-2"></i>Ek Hizmetler</h5>
                             <div class="row">
                                 @foreach($services as $service)
-                                <div class="col-md-4 mb-2">
-                                    <div class="form-check">
-                                        <input type="checkbox" name="ek_hizmetler[]" value="{{ $service->id }}" 
-                                            class="form-check-input bg-dark border-secondary service-checkbox" 
-                                            id="service_{{ $service->id }}"
-                                            data-price="{{ $service->fiyat ?? 0 }}">
-                                        <label class="form-check-label text-white-50" for="service_{{ $service->id }}">
-                                            {{ $service->baslik }} 
-                                            @if($service->fiyat > 0)
-                                                <small class="text-warning">({{ number_format($service->fiyat, 0, ',', '.') }} ₺)</small>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check p-3 bg-dark bg-opacity-50 rounded">
+                                        <div class="d-flex align-items-start gap-3">
+                                            @if($service->ikon)
+                                                <div style="width: 40px; height: 40px; min-width: 40px;" class="d-flex align-items-center justify-content-center bg-warning bg-opacity-10 rounded">
+                                                    <i class="{{ $service->ikon }} text-warning"></i>
+                                                </div>
                                             @endif
-                                        </label>
+                                            <div class="flex-grow-1">
+                                                <input type="checkbox" name="ek_hizmetler[]" value="{{ $service->id }}" 
+                                                    class="form-check-input bg-dark border-secondary service-checkbox float-end" 
+                                                    id="service_{{ $service->id }}"
+                                                    data-price="{{ $service->fiyat ?? 0 }}">
+                                                <label class="form-check-label text-white d-block" for="service_{{ $service->id }}">
+                                                    <strong>{{ $service->baslik }}</strong>
+                                                    @if($service->fiyat > 0)
+                                                        <span class="text-warning d-block small">{{ number_format($service->fiyat, 0, ',', '.') }} ₺</span>
+                                                    @endif
+                                                    @if($service->aciklama)
+                                                        <small class="text-white-50 d-block mt-1">{{ Str::limit($service->aciklama, 60) }}</small>
+                                                    @endif
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 @endforeach
@@ -258,8 +303,9 @@ span.flatpickr-weekday { color: rgba(197, 164, 126, 0.6) !important; font-size: 
                 </div>
                 
                 <!-- Sidebar -->
-                <div class="col-lg-4 h-100" id="sidebar-container">
-                    <div class="reservation-summary sticky-top-custom" id="sticky-sidebar">
+                <div class="col-lg-4">
+                    <div class="sidebar-sticky-wrapper">
+                        <div class="reservation-summary" id="sticky-sidebar">
                         <div class="villa-mini-card">
                             @if($villa->gorsel)
                                 <img src="{{ asset('storage/villas/' . $villa->gorsel) }}" alt="">
@@ -310,6 +356,7 @@ span.flatpickr-weekday { color: rgba(197, 164, 126, 0.6) !important; font-size: 
                             <i class="fas fa-shield-alt me-1"></i>
                             Rezervasyonunuz onaylandıktan sonra sizinle iletişime geçilecektir.
                         </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -319,35 +366,6 @@ span.flatpickr-weekday { color: rgba(197, 164, 126, 0.6) !important; font-size: 
 @endsection
 
 @push('scripts')
-<script>
-    // JS Fallback for Sticky Sidebar
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebar = document.getElementById('sticky-sidebar');
-        const container = document.getElementById('sidebar-container');
-        
-        if (sidebar && container) {
-            const offsetTop = 140;
-            
-            window.addEventListener('scroll', function() {
-                const containerRect = container.getBoundingClientRect();
-                
-                if (containerRect.top < offsetTop) {
-                    sidebar.classList.add('is-sticky');
-                    sidebar.style.width = container.offsetWidth + 'px';
-                } else {
-                    sidebar.classList.remove('is-sticky');
-                    sidebar.style.width = '100%';
-                }
-            });
-            
-            window.addEventListener('resize', function() {
-                if (sidebar.classList.contains('is-sticky')) {
-                    sidebar.style.width = container.offsetWidth + 'px';
-                }
-            });
-        }
-    });
-</script>
 <script>
     // Initialize Flatpickr (Datepicker) - Linked for reservation form (copied from villa detail page)
     document.addEventListener('DOMContentLoaded', function() {
@@ -406,7 +424,7 @@ span.flatpickr-weekday { color: rgba(197, 164, 126, 0.6) !important; font-size: 
             checkoutReservation.set('disable', occupiedDates);
         });
         
-        // Check availability
+        // Müsaitlik Kontrol Et
         function checkAvailability() {
             var gelis = document.getElementById('gelis_tarihi').value;
             var cikis = document.getElementById('cikis_tarihi').value;

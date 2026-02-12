@@ -137,17 +137,15 @@ span.flatpickr-weekday { color: var(--gold-accent) !important; }
         <div class="row align-items-center">
             <div class="col-lg-5">
                 <span class="section-subtitle">Hakkımızda</span>
-                <h2 class="mb-4 display-5">Eşsiz Lüks <br> Deneyim</h2>
+                <h2 class="mb-4 display-5">{{ $about->baslik ?? 'Eşsiz Lüks Deneyim' }}</h2>
                 <div class="row mt-5">
-                    <div class="col-md-6 mb-4">
-                        <p style="color: #999; font-size: 14px; line-height: 1.8;">
-                            Vavilla Çeşme, her detayıyla size özel tasarlanmış lüks villalarıyla unutulmaz bir tatil deneyimi sunuyor. Evinizin konforunu otel lüksüyle birleştiriyoruz.
-                        </p>
-                    </div>
-                    <div class="col-md-6 mb-4">
-                        <p style="color: #999; font-size: 14px; line-height: 1.8;">
-                            Ege'nin incisi Çeşme'de, doğayla içe içe, modern ve konforlu villalarımızda huzuru keşfedin. Size özel havuzlar ve geniş yaşam alanları ile tatilin keyfini çıkarın.
-                        </p>
+                    <div class="col-12 mb-4" style="color: #999; font-size: 14px; line-height: 1.8;">
+                        @if($about && $about->icerik)
+                            {!! $about->icerik !!}
+                        @else
+                            <p>Vavilla Çeşme, her detayıyla size özel tasarlanmış lüks villalarıyla unutulmaz bir tatil deneyimi sunuyor. Evinizin konforunu otel lüksüyle birleştiriyoruz.</p>
+                            <p>Ege'nin incisi Çeşme'de, doğayla içe içe, modern ve konforlu villalarımızda huzuru keşfedin. Size özel havuzlar ve geniş yaşam alanları ile tatilin keyfini çıkarın.</p>
+                        @endif
                     </div>
                 </div>
                 <a href="{{ url('/hakkimizda') }}" class="btn-gold mt-4">DAHA FAZLA</a>
@@ -156,10 +154,10 @@ span.flatpickr-weekday { color: var(--gold-accent) !important; }
             <div class="col-lg-6 offset-lg-1 position-relative">
                 <div class="row">
                     <div class="col-6 text-end" style="margin-top: 50px;">
-                        <img src="{{ asset('images/about-1.jpg') }}" alt="Vavilla Interior" class="img-fluid rounded" style="width: 100%; height: 400px; object-fit: cover; filter: brightness(0.8);">
+                        <img src="{{ $about && $about->image_1 ? asset('storage/about/' . $about->image_1) : asset('images/about-1.jpg') }}" alt="{{ $about->baslik ?? 'Vavilla Interior' }}" class="img-fluid rounded" style="width: 100%; height: 400px; object-fit: cover; filter: brightness(0.8);">
                     </div>
                     <div class="col-6">
-                        <img src="{{ asset('images/about-2.jpg') }}" alt="Vavilla Bedroom" class="img-fluid rounded" style="width: 100%; height: 400px; object-fit: cover; filter: brightness(0.8);">
+                        <img src="{{ $about && $about->image_2 ? asset('storage/about/' . $about->image_2) : asset('images/about-2.jpg') }}" alt="{{ $about->baslik ?? 'Vavilla Bedroom' }}" class="img-fluid rounded" style="width: 100%; height: 400px; object-fit: cover; filter: brightness(0.8);">
                     </div>
                 </div>
             </div>
@@ -226,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
 @endpush
 @endif
 
-<!-- Rooms & Suites Section -->
+<!-- Odalar & Villalar Section -->
 <section class="rooms-section py-5" style="background-color: #0b0b0b;">
     <div class="container">
         <div class="text-center mb-5">

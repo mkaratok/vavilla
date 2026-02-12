@@ -41,7 +41,7 @@
                     </td>
                     <td>{{ $blog->baslik }}</td>
                     <td>{{ $blog->kategori }}</td>
-                    <td>{{ $blog->tarih ? $blog->tarih->format('d.m.Y') : '-' }}</td>
+                    <td>{{ $blog->tarih ?? '-' }}</td>
                     <td>
                         @if($blog->durum)
                             <span class="badge bg-success">Yayında</span>

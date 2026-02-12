@@ -23,6 +23,9 @@ class ServiceController extends Controller
     {
         $request->validate([
             'baslik' => 'required|string|max:255',
+            'fiyat' => 'nullable|numeric|min:0',
+            'aciklama' => 'nullable|string|max:1000',
+            'ikon' => 'nullable|string|max:50',
         ]);
 
         AdditionalService::create($request->all());
@@ -41,6 +44,9 @@ class ServiceController extends Controller
     {
         $request->validate([
             'baslik' => 'required|string|max:255',
+            'fiyat' => 'nullable|numeric|min:0',
+            'aciklama' => 'nullable|string|max:1000',
+            'ikon' => 'nullable|string|max:50',
         ]);
 
         $service->update($request->all());
