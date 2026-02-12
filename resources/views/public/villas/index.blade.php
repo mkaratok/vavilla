@@ -40,7 +40,7 @@
                             
                             <div class="d-flex gap-3">
                                 <a href="{{ route('villas.show', $villa->sef) }}" class="btn-outline-gold d-flex align-items-center justify-content-center">DETAYLAR <i class="fas fa-arrow-right ms-2"></i></a>
-                                <a href="{{ route('villas.show', $villa->sef) }}" class="btn-gold d-flex align-items-center justify-content-center">REZERVASYON YAP</a>
+                                <a href="{{ route('reservation.create', $villa->sef) }}" class="btn-gold d-flex align-items-center justify-content-center">REZERVASYON YAP</a>
                             </div>
                         </div>
                     </div>

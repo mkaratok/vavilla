@@ -149,31 +149,6 @@ span.flatpickr-weekday { color: rgba(197, 164, 126, 0.6) !important; font-size: 
                                 </div>
                             </div>
                             
-                            <!-- Doluluk Durumu -->
-                            <div class="availability-status mb-3 p-3 rounded" style="background-color: #0c0c0c; border: 1px solid rgba(255,255,255,0.1);">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <div>
-                                        <span class="text-white-50 small">Doluluk Durumu:</span>
-                                        <div class="mt-2" id="availability-message">
-                                            <span class="text-white-50">Tarih seçim yapınız</span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <small class="text-white-50 d-block mb-2">Gösterge:</small>
-                                        <div class="d-flex gap-2">
-                                            <div class="d-flex align-items-center gap-1">
-                                                <div style="width: 12px; height: 12px; background: #28a745; border-radius: 2px;"></div>
-                                                <small class="text-white-50">Müsait</small>
-                                            </div>
-                                            <div class="d-flex align-items-center gap-1">
-                                                <div style="width: 12px; height: 12px; background: #dc3545; border-radius: 2px;"></div>
-                                                <small class="text-white-50">Dolu</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
                             <div class="alert alert-dark border-start border-warning border-4 text-white-50" id="price-info" style="display: none; background-color: #222;">
                                 <div class="row align-items-center">
                                     <div class="col-md-4"><strong>Gece:</strong> <span id="night-count" class="text-white">0</span></div>

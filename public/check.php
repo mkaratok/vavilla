@@ -14,6 +14,69 @@ $kernel->bootstrap();
 
 use Illuminate\Support\Facades\Artisan;
 
+// Helper function to recursively remove a directory
+function removeDirectory($dir) {
+    if (!is_dir($dir)) {
+        if (is_link($dir)) {
+            return unlink($dir);
+        }
+        return false;
+    }
+    
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS)
+    );
+    
+    foreach ($iterator as $file) {
+        if ($file->isLink()) {
+            unlink($file->getPathname());
+        } elseif ($file->isDir()) {
+            rmdir($file->getPathname());
+        } else {
+            unlink($file->getPathname());
+        }
+    }
+    
+    return rmdir($dir);
+}
+
+// Helper function to copy directory contents (alternative to junction for Windows)
+function copyDirectoryContents($source, $destination) {
+    if (!is_dir($source)) {
+        throw new \Exception("Source directory does not exist: $source");
+    }
+    
+    // Create destination directory if it doesn't exist
+    if (!is_dir($destination)) {
+        if (!mkdir($destination, 0755, true)) {
+            throw new \Exception("Cannot create destination directory: $destination");
+        }
+    }
+    
+    // Get directory iterator for source
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS)
+    );
+    
+    foreach ($iterator as $item) {
+        $destPath = $destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName();
+        
+        if ($item->isDir()) {
+            // Create directory in destination
+            if (!is_dir($destPath)) {
+                mkdir($destPath, 0755, true);
+            }
+        } else {
+            // Copy file to destination
+            if (!copy($item->getPathname(), $destPath)) {
+                throw new \Exception("Failed to copy file: " . $item->getPathname());
+            }
+        }
+    }
+    
+    return "Directory contents copied successfully from $source to $destination";
+}
+
 $results = [];
 
 if (isset($_GET['cmd'])) {
@@ -26,28 +89,31 @@ if (isset($_GET['cmd'])) {
                 $targetFolder = __DIR__ . '/../storage/app/public';
                 $linkFolder = __DIR__ . '/storage';
                 
+                // Eski linki veya dizini sil
                 if (file_exists($linkFolder)) {
-                    @unlink($linkFolder); 
+                    // Eğer sembolik linkse unlink ile silebiliriz
+                    if (is_link($linkFolder)) {
+                        @unlink($linkFolder);
+                    } elseif (is_dir($linkFolder)) {
+                        // Dizinse, içindeki dosyaları silip sonra dizini silelim
+                        removeDirectory($linkFolder);
+                    }
                 }
                 
                 $output = "";
                 $status = "success";
                 
-                try {
-                    // Native Symlink (Daha garantidir)
+                // Check if symlink function is available
+                if (!function_exists('symlink')) {
+                    // If symlink is not available, use directory copying as fallback
+                    $output = copyDirectoryContents($targetFolder, $linkFolder);
+                } else {
+                    // Try to create symlink
                     if (symlink($targetFolder, $linkFolder)) {
                         $output = "Sembolik link başarıyla oluşturuldu (Native PHP).\nTarget: $targetFolder\nLink: $linkFolder";
                     } else {
-                        throw new \Exception("Native symlink başarısız oldu.");
-                    }
-                } catch (\Exception $e) {
-                    // Fallback to Artisan
-                    try {
-                        Artisan::call('storage:link');
-                        $output = "Artisan storage:link çalıştırıldı.\n" . Artisan::output();
-                    } catch (\Exception $e2) {
-                        $output = "Hata: " . $e2->getMessage();
-                        $status = "error";
+                        // If symlink creation failed, use directory copying as fallback
+                        $output = copyDirectoryContents($targetFolder, $linkFolder);
                     }
                 }
                 
