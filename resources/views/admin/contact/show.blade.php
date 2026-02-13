@@ -16,6 +16,13 @@
     <div class="card-body">
         <div class="row mb-4">
             <div class="col-md-6">
+                <p><strong>Gönderen:</strong> {{ $message->adsoyad }}</p>
+                <p><strong>E-posta:</strong> {{ $message->email }}</p>
+                @if($message->telefon)
+                <p><strong>Telefon:</strong> {{ $message->telefon }}</p>
+                @endif
+            </div>
+            <div class="col-md-6">
                 <p><strong>Tarih:</strong> {{ $message->created_at?->format('d.m.Y H:i') ?? date('d.m.Y H:i', $message->tarih) }}</p>
                 <p><strong>IP Adresi:</strong> {{ $message->ip }}</p>
             </div>

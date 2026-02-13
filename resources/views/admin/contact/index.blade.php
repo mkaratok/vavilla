@@ -17,6 +17,7 @@
             <thead>
                 <tr>
                     <th width="50">ID</th>
+                    <th>Gönderen</th>
                     <th>Konu</th>
                     <th>Tarih</th>
                     <th>Durum</th>
@@ -33,8 +34,9 @@
                         @else
                             <i class="far fa-envelope-open text-muted me-2"></i>
                         @endif
-                        {{ $message->konu }}
+                        {{ $message->adsoyad }}
                     </td>
+                    <td>{{ $message->konu }}</td>
                     <td>{{ $message->created_at?->format('d.m.Y H:i') ?? date('d.m.Y H:i', $message->tarih) }}</td>
                     <td>
                         @if($message->durum == 0)
@@ -58,7 +60,12 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="text-center">Henüz mesaj yok.</td>
+                    <td>---</td>
+                    <td>---</td>
+                    <td>Henüz mesaj yok.</td>
+                    <td>---</td>
+                    <td>---</td>
+                    <td>---</td>
                 </tr>
                 @endforelse
             </tbody>

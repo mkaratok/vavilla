@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ContactFormReceived;
-use App\Models\Contact;
+use App\Models\ContactMessage;
 use App\Models\Newsletter;
 use App\Models\Setting;
 use Illuminate\Http\Request;
@@ -15,15 +15,17 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'adsoyad' => 'required|string|max:255',
-            'telefon' => 'required|string|max:50',
+            'ad' => 'required|string|max:255',
+            'soyad' => 'required|string|max:255',
             'email' => 'required|email|max:255',
+            'telefon' => 'nullable|string|max:50',
             'konu' => 'required|string|max:255',
             'mesaj' => 'required|string',
         ]);
 
-        $contact = Contact::create([
-            'adsoyad' => $request->adsoyad,
+        $contact = ContactMessage::create([
+            'ad' => $request->ad,
+            'soyad' => $request->soyad,
             'email' => $request->email,
             'telefon' => $request->telefon,
             'konu' => $request->konu,

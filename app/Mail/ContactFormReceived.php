@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Contact;
+use App\Models\ContactMessage;
 use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -14,13 +14,13 @@ class ContactFormReceived extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public Contact $contact;
+    public ContactMessage $contact;
     public $settings;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Contact $contact)
+    public function __construct(ContactMessage $contact)
     {
         $this->contact = $contact;
         $this->settings = Setting::instance();
