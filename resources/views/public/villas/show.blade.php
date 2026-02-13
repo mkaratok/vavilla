@@ -96,6 +96,11 @@
                 </div>
 
                 <a href="#booking-form" class="btn btn-gold px-5 py-3">Müsaitlik Kontrol Et</a>
+                @if(!empty($settings->telefon1))
+                <a href="tel:{{ preg_replace('/[^0-9+]/', '', $settings->telefon1) }}" class="btn btn-outline-gold px-5 py-3 ms-3">
+                    <i class="fas fa-phone me-2"></i>Telefon ile Randevu
+                </a>
+                @endif
             </div>
 
             <!-- Right Column: İmkanlar -->

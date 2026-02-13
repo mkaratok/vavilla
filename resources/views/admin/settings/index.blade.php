@@ -288,8 +288,9 @@
                             </div>
                             
                             <div class="mb-3">
-                                <label class="form-label">Telefon 2</label>
-                                <input type="text" name="telefon2" class="form-control" value="{{ $settings->telefon2 }}">
+                                <label class="form-label"><i class="fab fa-whatsapp text-success me-2"></i>Telefon 2 (WhatsApp)</label>
+                                <input type="text" name="telefon2" class="form-control" value="{{ $settings->telefon2 }}" placeholder="905xxxxxxxxx">
+                                <small class="text-muted">Bu numara WhatsApp butonunda kullanılacaktır.</small>
                             </div>
                             
                             <div class="mb-3">

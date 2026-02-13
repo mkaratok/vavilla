@@ -331,6 +331,101 @@
             .header-cta { display: none; }
         }
 
+        /* ===== FLOATING WHATSAPP BUTTON ===== */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            border: 2px solid var(--gold-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(197, 164, 126, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            animation: whatsappPulse 2s infinite;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.4),
+                0 0 30px rgba(197, 164, 126, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-color: #d4af37;
+        }
+
+        .whatsapp-float i {
+            font-size: 28px;
+            color: var(--gold-accent);
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-float:hover i {
+            color: #d4af37;
+            text-shadow: 0 0 10px rgba(197, 164, 126, 0.5);
+        }
+
+        /* Shimmer effect */
+        .whatsapp-float::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(197, 164, 126, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shimmer 3s infinite linear;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes whatsappPulse {
+            0%, 100% { 
+                box-shadow: 
+                    0 4px 15px rgba(0, 0, 0, 0.3),
+                    0 0 20px rgba(197, 164, 126, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+            50% { 
+                box-shadow: 
+                    0 4px 15px rgba(0, 0, 0, 0.3),
+                    0 0 30px rgba(197, 164, 126, 0.35),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+                width: 55px;
+                height: 55px;
+            }
+            .whatsapp-float i {
+                font-size: 24px;
+            }
+        }
+
         @stack('styles')
     </style>
 </head>
@@ -486,5 +581,17 @@
     </script>
     
     @stack('scripts')
+    
+    <!-- Floating WhatsApp Button -->
+    @if(!empty($settings->telefon2))
+    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $settings->telefon2) }}" 
+       class="whatsapp-float" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       aria-label="WhatsApp ile iletişime geçin"
+       title="WhatsApp ile iletişime geçin">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    @endif
 </body>
 </html>
