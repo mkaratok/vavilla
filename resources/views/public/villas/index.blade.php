@@ -33,9 +33,7 @@
                             </p>
                             
                             <div class="room-features d-flex flex-wrap gap-4 mb-5 text-white-50 small">
-                                <div><i class="fas fa-user-friends text-warning me-2"></i> {{ $villa->kisi_sayisi }} Kişi</div>
-                                <div><i class="fas fa-bed text-warning me-2"></i> {{ $villa->yatak_odasi }} Yatak</div>
-                                <div><i class="fas fa-ruler-combined text-warning me-2"></i> {{ $villa->metrekare ?? '150' }} m²</div>
+                                <div><i class="fas fa-user-friends text-warning me-2"></i> {{ $villa->yetiskin }} Kişi</div>
                             </div>
                             
                             <div class="d-flex gap-3">
@@ -75,7 +73,7 @@
     <div class="container">
         <div class="text-center mb-5">
             <div class="text-warning small mb-2">Müsaitlik Kontrol Et</div>
-            <h2 class="text-white font-cormorant">Search Rooms</h2>
+            <h2 class="text-white font-cormorant"></h2>
         </div>
         
         <div class="search-box p-4" style="background-color: #1b1b1b; border: 1px solid rgba(255,255,255,0.05);">
@@ -159,9 +157,27 @@
     .font-cormorant { font-family: 'Cormorant Garamond', serif; }
     
     @media (max-width: 991px) {
-        .room-info { margin: 0 !important; }
+        .room-info { margin: 0 !important; padding: 30px !important; }
         .room-image { height: 300px !important; }
+        .room-image img { height: 300px !important; }
         .flex-row-reverse { flex-direction: column-reverse !important; }
+        .room-item { margin-bottom: 60px !important; }
+        .room-features { flex-wrap: wrap; }
+        .room-info .d-flex.gap-3 { flex-direction: column; gap: 10px !important; }
+        .room-info .d-flex.gap-3 a { width: 100%; text-align: center; }
+        .extra-card { flex-direction: column !important; }
+        .extra-card .extra-img { width: 100% !important; height: 200px !important; }
+        .extra-card .extra-content { width: 100% !important; }
+        .search-box .row .col-md-3,
+        .search-box .row .col-md-2 { flex: 0 0 50%; max-width: 50%; }
+    }
+
+    @media (max-width: 576px) {
+        .page-header { height: 40vh !important; min-height: 300px !important; }
+        .page-header h1 { font-size: 2rem !important; }
+        .room-info h3 { font-size: 24px !important; }
+        .search-box .row .col-md-3,
+        .search-box .row .col-md-2 { flex: 0 0 100%; max-width: 100%; }
     }
     
     .form-control::placeholder { color: rgba(255,255,255,0.3); }

@@ -1,13 +1,13 @@
 @extends('public.layouts.master')
 
-@section('title', 'İletişim - Vellura Çeşme')
+@section('title', 'İletişim - Vavilla Çeşme')
 
 @section('content')
 <!-- Page Header -->
 <section class="page-header position-relative" style="height: 60vh; min-height: 400px; background-image: url('{{ asset('images/contact-header.jpg') }}'); background-size: cover; background-position: center;">
     <div class="overlay" style="position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5);"></div>
     <div class="container h-100 position-relative z-2 d-flex flex-column align-items-center justify-content-center text-center">
-        <div class="text-warning mb-2" style="font-size: 14px; letter-spacing: 3px; text-transform: uppercase;">The Cappa</div>
+        <div class="text-warning mb-2" style="font-size: 14px; letter-spacing: 3px; text-transform: uppercase;">Vavilla</div>
         <h1 class="display-3 text-white font-cormorant fw-bold">İletişim</h1>
     </div>
 </section>
@@ -50,7 +50,7 @@
                         </div>
                         <div class="text">
                             <h5>E-posta</h5>
-                            <p>{{ $settings->iletisim_email ?? 'info@cesmevellura.com' }}</p>
+                            <p>{{ $settings->iletisim_email ?? 'info@vavilla.com' }}</p>
                         </div>
                     </div>
                     
@@ -290,6 +290,23 @@
         height: 100%;
         border: 0;
         filter: grayscale(100%) invert(92%) contrast(83%);
+    }
+
+    @media (max-width: 991px) {
+        .contact-content { padding: 60px 0; }
+        .contact-info { margin-bottom: 40px; }
+        .contact-form { padding: 25px; }
+        .page-header { height: 40vh !important; min-height: 280px !important; }
+        .page-header h1 { font-size: 2.5rem !important; }
+        .contact-map { height: 300px; }
+    }
+
+    @media (max-width: 576px) {
+        .contact-content { padding: 40px 0; }
+        .contact-form { padding: 20px; }
+        .page-header h1 { font-size: 2rem !important; }
+        .btn-submit { width: 100%; text-align: center; }
+        .contact-map { height: 250px; }
     }
 </style>
 @endpush

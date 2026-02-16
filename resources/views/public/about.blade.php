@@ -1,13 +1,13 @@
 @extends('public.layouts.master')
 
-@section('title', 'Hakkımızda - Vellura Çeşme')
+@section('title', 'Hakkımızda - Vavilla Çeşme')
 
 @section('content')
 <!-- Page Header -->
 <section class="page-header position-relative" style="height: 60vh; min-height: 400px; background-image: url('{{ asset('images/about-header.jpg') }}'); background-size: cover; background-position: center;">
     <div class="overlay" style="position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5);"></div>
     <div class="container h-100 position-relative z-2 d-flex flex-column align-items-center justify-content-center text-center">
-        <div class="text-warning mb-2" style="font-size: 14px; letter-spacing: 3px; text-transform: uppercase;">The Cappa</div>
+        <div class="text-warning mb-2" style="font-size: 14px; letter-spacing: 3px; text-transform: uppercase;">Vavilla</div>
         <h1 class="display-3 text-white font-cormorant fw-bold">Hakkımızda</h1>
     </div>
 </section>
@@ -18,12 +18,12 @@
         <div class="row align-items-center mb-5">
             <div class="col-lg-6">
                 <div class="about-image">
-                    <img src="{{ $about && $about->image_1 ? asset('storage/about/' . $about->image_1) : asset('images/about-1.jpg') }}" alt="{{ $about->baslik ?? 'Vellura Çeşme' }}" class="img-fluid rounded">
+                    <img src="{{ $about && $about->image_1 ? asset('storage/about/' . $about->image_1) : asset('images/about-1.jpg') }}" alt="{{ $about->baslik ?? 'Vavilla Çeşme' }}" class="img-fluid rounded">
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="about-text">
-                    <h2>{{ $about->baslik ?? 'Vellura Çeşme' }}</h2>
+                    <h2>{{ $about->baslik ?? 'Vavilla Çeşme' }}</h2>
                     {!! $about->icerik ?? '<p>Her biri bir çiçeğin zarafetiyle adlandırılmış villalarımızla, misafirlerimize ev konforunda, huzurlu ve unutulmaz bir tatil deneyimi sunmak için yola çıktık.</p><p>Begonvil, Petunya, Orkide, Papatya, Ortanca ve Menekşe isimlerini taşıyan villalarımız; sadece bir konaklama alanı değil, aynı zamanda her detayında özen ve sevgiyle hazırlanmış özel yaşam alanlarıdır.</p><p>Çeşme\'nin eşsiz güzelliğinde, doğayla iç içe, lüks ve konforun buluştuğu villalarımızda sizi ağırlamaktan mutluluk duyarız.</p>' !!}
                 </div>
             </div>
@@ -32,7 +32,7 @@
         <div class="row align-items-center">
             <div class="col-lg-6 order-lg-2">
                 <div class="about-image">
-                    <img src="{{ $about && $about->image_2 ? asset('storage/about/' . $about->image_2) : asset('images/about-2.jpg') }}" alt="{{ $about->baslik ?? 'Vellura Çeşme' }}" class="img-fluid rounded">
+                    <img src="{{ $about && $about->image_2 ? asset('storage/about/' . $about->image_2) : asset('images/about-2.jpg') }}" alt="{{ $about->baslik ?? 'Vavilla Çeşme' }}" class="img-fluid rounded">
                 </div>
             </div>
             <div class="col-lg-6 order-lg-1">
@@ -129,6 +129,21 @@
     .about-features i {
         color: var(--secondary-color);
         font-size: 18px;
+    }
+
+    @media (max-width: 991px) {
+        .about-content { padding: 60px 0; }
+        .about-text h2 { font-size: 28px; }
+        .about-image { margin-bottom: 30px; }
+        .page-header { height: 40vh !important; min-height: 280px !important; }
+        .page-header h1 { font-size: 2.5rem !important; }
+    }
+
+    @media (max-width: 576px) {
+        .about-content { padding: 40px 0; }
+        .about-text h2 { font-size: 24px; }
+        .about-text h3 { font-size: 22px; }
+        .page-header h1 { font-size: 2rem !important; }
     }
 </style>
 @endpush

@@ -4,6 +4,7 @@
 
 @push('styles')
 <style>
+/* Search Box - border and shadow defined inline on the element */
 /* Search Box Glow Effect */
 .search-box-wrapper {
     position: relative;
@@ -49,28 +50,100 @@
 }        border-color: rgba(197, 164, 126, 0.3);
     }
 }
+/* ===== HOME PAGE MOBILE RESPONSIVE ===== */
+@media (max-width: 991px) {
+    .hero-section {
+        height: auto !important;
+        min-height: 100vh;
+    }
 
-/* Flatpickr Dark Theme Overrides */
-.flatpickr-calendar { background: #1a1a1a !important; border: 1px solid rgba(197, 164, 126, 0.3) !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important; }
-.flatpickr-day { color: var(--gold-accent) !important; }
-.flatpickr-day:hover { background: #333 !important; color: #fff !important; }
-.flatpickr-day.selected { background: var(--gold-accent) !important; border-color: var(--gold-accent) !important; color: #000 !important; }
-.flatpickr-day.today { border-color: var(--gold-accent) !important; }
+    .hero-section .display-3 {
+        font-size: 2.5rem !important;
+    }
 
-/* Header & Text Colors */
-.flatpickr-months .flatpickr-month { background: #1a1a1a !important; color: var(--gold-accent) !important; fill: var(--gold-accent) !important; }
-.flatpickr-current-month .flatpickr-monthDropdown-months,
-.flatpickr-current-month input.cur-year { color: var(--gold-accent) !important; font-weight: 600; }
-.flatpickr-current-month .flatpickr-monthDropdown-months:hover,
-.flatpickr-current-month input.cur-year:hover { background: rgba(197, 164, 126, 0.1); }
-.flatpickr-weekdays { background: #1a1a1a !important; }
-span.flatpickr-weekday { color: var(--gold-accent) !important; }
+    .search-section {
+        margin-top: -40px !important;
+    }
 
-/* Arrows */
-.flatpickr-months .flatpickr-prev-month, 
-.flatpickr-months .flatpickr-next-month { color: var(--gold-accent) !important; fill: var(--gold-accent) !important; }
-.flatpickr-months .flatpickr-prev-month:hover svg, 
-.flatpickr-months .flatpickr-next-month:hover svg { fill: #fff !important; }
+    .search-box-wrapper .row .col-lg-3,
+    .search-box-wrapper .row .col-lg-2,
+    .search-box-wrapper .row .col-lg-1 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .about-section {
+        padding-top: 80px !important;
+        padding-bottom: 60px !important;
+    }
+
+    .about-section .display-5 {
+        font-size: 2rem !important;
+    }
+
+    .about-section .col-lg-6.offset-lg-1 {
+        margin-top: 40px;
+    }
+
+    .about-section .col-6 img {
+        height: 250px !important;
+    }
+
+    .facilities-section {
+        padding-top: 60px !important;
+        padding-bottom: 60px !important;
+    }
+
+    .news-section .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section .container {
+        padding-top: 100px !important;
+    }
+
+    .hero-section .display-3 {
+        font-size: 1.8rem !important;
+    }
+
+    .hero-section span[style*="font-size: 24px"] {
+        font-size: 16px !important;
+        letter-spacing: 2px !important;
+    }
+
+    .search-box-wrapper {
+        padding: 15px !important;
+    }
+
+    .search-box-wrapper .row .col-lg-3,
+    .search-box-wrapper .row .col-lg-2,
+    .search-box-wrapper .row .col-lg-1 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .about-section .col-6 img {
+        height: 180px !important;
+    }
+
+    .about-section .display-5 {
+        font-size: 1.6rem !important;
+    }
+
+    .villa-card .d-flex.gap-3 {
+        flex-wrap: wrap;
+        gap: 8px !important;
+    }
+
+    .testimonials-section .lead {
+        font-size: 1rem !important;
+    }
+}
+
+/* Flatpickr styles are now global in master.blade.php */
 </style>
 @endpush
 
@@ -79,17 +152,17 @@ span.flatpickr-weekday { color: var(--gold-accent) !important; }
 <!-- Hero Section -->
 <section class="hero-section" style="background-image: url('{{ asset('images/hero-bg.jpg') }}'); background-size: cover; background-position: center; height: 100vh; position: relative;">
     <div class="overlay" style="position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.3);"></div>
-    <div class="container h-100 position-relative z-2">
+    <div class="container h-100 position-relative z-2" style="padding-top: 80px;">
         <div class="d-flex flex-column justify-content-center h-100 text-center text-white">
             <span class="d-block mb-3" style="font-family: 'Cormorant Garamond', serif; font-size: 24px; letter-spacing: 4px; text-transform: uppercase;">Lüks Bir Deneyimin Adresi</span>
             <h1 class="display-3 fw-bold mb-4" style="letter-spacing: 2px;">SİZİN İÇİN <br> <span style="color: var(--gold-accent);">MÜKEMMEL BİR ÜS</span></h1>
         </div>
     </div>
-    
-    <!-- Floating Search Box -->
+</section>
+
+<!-- Floating Search Box -->
     <div class="container position-relative z-3" style="margin-top: -80px; margin-bottom: 80px;">
-        <div class="search-box-wrapper p-4 shadow-lg rounded" style="background: rgba(26, 26, 26, 0.95); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.4);">
-            <form action="{{ route('villas.index') }}" method="GET" class="row g-3 align-items-end">
+        <div class="search-box-wrapper p-4 shadow-lg rounded" style="background: rgba(26, 26, 26, 0.95); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.4);"><form action="{{ route('villas.index') }}" method="GET" class="row g-3 align-items-end">
                 <div class="col-lg-3 col-md-6">
                     <label class="form-label small fw-bold text-uppercase text-white-50">Bölge</label>
                     <select name="bolge" class="form-select border-secondary bg-dark text-white p-3">

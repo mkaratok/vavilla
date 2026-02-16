@@ -7,7 +7,7 @@
 <section class="page-header position-relative" style="height: 60vh; min-height: 400px; background-image: url('{{ asset('images/gallery-header.jpg') }}'); background-size: cover; background-position: center;">
     <div class="overlay" style="position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5);"></div>
     <div class="container h-100 position-relative z-2 d-flex flex-column align-items-center justify-content-center text-center">
-        <div class="text-warning mb-2" style="font-size: 14px; letter-spacing: 3px; text-transform: uppercase;">The Cappa</div>
+        <div class="text-warning mb-2" style="font-size: 14px; letter-spacing: 3px; text-transform: uppercase;">Vavilla</div>
         <h1 class="display-3 text-white font-cormorant fw-bold">Galeri</h1>
     </div>
 </section>

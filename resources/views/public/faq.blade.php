@@ -1,6 +1,6 @@
 @extends('public.layouts.master')
 
-@section('title', 'Sık Sorulan Sorular - ' . ($settings->siteadi ?? 'Villa Kiralama'))
+@section('title', 'Sık Sorulan Sorular - ' . ($settings->siteadi ?? 'Vavilla Çeşme'))
 
 @section('content')
 <div class="page-header">

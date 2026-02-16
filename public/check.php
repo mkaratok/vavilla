@@ -85,42 +85,175 @@ if (isset($_GET['cmd'])) {
     try {
         switch ($cmd) {
             case 'storage':
-                // Önce eski linki silmeyi deneyelim
-                $targetFolder = __DIR__ . '/../storage/app/public';
+                $targetFolder = realpath(__DIR__ . '/../storage/app/public');
                 $linkFolder = __DIR__ . '/storage';
                 
+                $output = "";
+                $status = "success";
+                $method = "";
+                
                 // Eski linki veya dizini sil
-                if (file_exists($linkFolder)) {
-                    // Eğer sembolik linkse unlink ile silebiliriz
+                if (file_exists($linkFolder) || is_link($linkFolder)) {
                     if (is_link($linkFolder)) {
                         @unlink($linkFolder);
                     } elseif (is_dir($linkFolder)) {
-                        // Dizinse, içindeki dosyaları silip sonra dizini silelim
                         removeDirectory($linkFolder);
                     }
                 }
                 
-                $output = "";
-                $status = "success";
-                
-                // Check if symlink function is available
-                if (!function_exists('symlink')) {
-                    // If symlink is not available, use directory copying as fallback
-                    $output = copyDirectoryContents($targetFolder, $linkFolder);
-                } else {
-                    // Try to create symlink
-                    if (symlink($targetFolder, $linkFolder)) {
-                        $output = "Sembolik link başarıyla oluşturuldu (Native PHP).\nTarget: $targetFolder\nLink: $linkFolder";
+                // Yöntem 1: symlink (en iyi yöntem)
+                $linked = false;
+                if (function_exists('symlink')) {
+                    // Hata bastırarak dene
+                    set_error_handler(function() {});
+                    $linked = @symlink($targetFolder, $linkFolder);
+                    restore_error_handler();
+                    
+                    if ($linked && is_link($linkFolder)) {
+                        $method = "symlink";
+                        $output = "✅ Sembolik link başarıyla oluşturuldu (symlink).\n";
                     } else {
-                        // If symlink creation failed, use directory copying as fallback
-                        $output = copyDirectoryContents($targetFolder, $linkFolder);
+                        $linked = false;
                     }
                 }
                 
+                // Yöntem 2: Relative symlink dene
+                if (!$linked && function_exists('symlink')) {
+                    $relativeTarget = '../storage/app/public';
+                    set_error_handler(function() {});
+                    $linked = @symlink($relativeTarget, $linkFolder);
+                    restore_error_handler();
+                    
+                    if ($linked && is_link($linkFolder)) {
+                        $method = "relative symlink";
+                        $output = "✅ Sembolik link başarıyla oluşturuldu (relative symlink).\n";
+                    } else {
+                        $linked = false;
+                        @unlink($linkFolder); // temizle
+                    }
+                }
+                
+                // Yöntem 3: PHP router dosyası ile proxy (en güvenilir fallback)
+                if (!$linked) {
+                    // storage klasörünü oluştur
+                    if (!is_dir($linkFolder)) {
+                        mkdir($linkFolder, 0755, true);
+                    }
+                    
+                    // .htaccess ile rewrite kuralı yaz
+                    $htaccess = $linkFolder . '/.htaccess';
+                    $htaccessContent = <<<'HTACCESS'
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ serve.php?file=$1 [L,QSA]
+</IfModule>
+HTACCESS;
+                    file_put_contents($htaccess, $htaccessContent);
+                    
+                    // serve.php - dosyaları storage'dan sunan proxy
+                    $serveFile = $linkFolder . '/serve.php';
+                    $serveContent = <<<'SERVE'
+<?php
+$file = isset($_GET['file']) ? $_GET['file'] : '';
+$file = str_replace(['..', "\0"], '', $file); // güvenlik
+
+$storagePath = realpath(__DIR__ . '/../../storage/app/public');
+$filePath = $storagePath . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $file);
+
+if (!$storagePath || !file_exists($filePath) || !is_file($filePath)) {
+    http_response_code(404);
+    exit('File not found');
+}
+
+// Dosyanın storage içinde olduğunu doğrula (path traversal koruması)
+if (strpos(realpath($filePath), $storagePath) !== 0) {
+    http_response_code(403);
+    exit('Forbidden');
+}
+
+$mime = mime_content_type($filePath);
+$size = filesize($filePath);
+
+// Cache headers
+$lastModified = filemtime($filePath);
+$etag = md5($filePath . $lastModified);
+
+header('Content-Type: ' . $mime);
+header('Content-Length: ' . $size);
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
+header('ETag: "' . $etag . '"');
+header('Cache-Control: public, max-age=31536000');
+
+// 304 Not Modified kontrolü
+if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && trim($_SERVER['HTTP_IF_NONE_MATCH'], '"') === $etag) {
+    http_response_code(304);
+    exit;
+}
+
+readfile($filePath);
+exit;
+SERVE;
+                    file_put_contents($serveFile, $serveContent);
+                    
+                    // Ayrıca mevcut dosyaları da kopyala (htaccess çalışmazsa diye)
+                    if (is_dir($targetFolder)) {
+                        copyDirectoryContents($targetFolder, $linkFolder);
+                    }
+                    
+                    $method = "PHP proxy + dosya kopyalama";
+                    $output = "✅ Storage bağlantısı oluşturuldu (PHP proxy + dosya kopyalama).\n";
+                    $output .= "📁 .htaccess rewrite kuralı yazıldı.\n";
+                    $output .= "📁 serve.php proxy dosyası oluşturuldu.\n";
+                    $output .= "📁 Mevcut dosyalar kopyalandı.\n";
+                    $output .= "\n⚠️ NOT: Yeni dosya yüklendiğinde 'Storage Sync' butonuna basın.\n";
+                    $linked = true;
+                }
+                
+                $output .= "\nTarget: $targetFolder\nLink: $linkFolder\nYöntem: $method";
+                
                 $results[] = [
-                    'command' => 'Storage Link (Native + Fallback)',
+                    'command' => "Storage Link ($method)",
                     'output' => $output,
                     'status' => $status
+                ];
+                break;
+                
+            case 'storage_sync':
+                // Dosyaları storage'dan public/storage'a senkronize et
+                $targetFolder = realpath(__DIR__ . '/../storage/app/public');
+                $linkFolder = __DIR__ . '/storage';
+                
+                if (!$targetFolder || !is_dir($targetFolder)) {
+                    $results[] = [
+                        'command' => 'Storage Sync',
+                        'output' => 'Storage klasörü bulunamadı: ' . __DIR__ . '/../storage/app/public',
+                        'status' => 'error'
+                    ];
+                    break;
+                }
+                
+                // Eğer symlink ise sync'e gerek yok
+                if (is_link($linkFolder)) {
+                    $results[] = [
+                        'command' => 'Storage Sync',
+                        'output' => 'Storage zaten symlink olarak bağlı, sync gerekmiyor.',
+                        'status' => 'success'
+                    ];
+                    break;
+                }
+                
+                if (!is_dir($linkFolder)) {
+                    mkdir($linkFolder, 0755, true);
+                }
+                
+                copyDirectoryContents($targetFolder, $linkFolder);
+                
+                $results[] = [
+                    'command' => 'Storage Sync',
+                    'output' => "✅ Dosyalar senkronize edildi.\nKaynak: $targetFolder\nHedef: $linkFolder",
+                    'status' => 'success'
                 ];
                 break;
                 
@@ -201,7 +334,9 @@ if (isset($_GET['cmd'])) {
     <h1>🛠️ Server Bakım Aracı</h1>
     
     <a href="?cmd=optimize" class="btn">🧹 Cache Temizle (Optimize:clear)</a>
-    <a href="?cmd=storage" class="btn btn-warning">🔗 Storage Link Oluştur (Native)</a>
+    <a href="?cmd=cache" class="btn">🗑️ Tüm Cache Temizle</a>
+    <a href="?cmd=storage" class="btn btn-warning">🔗 Storage Link Oluştur</a>
+    <a href="?cmd=storage_sync" class="btn btn-warning" style="background:#e6a817;">🔄 Storage Sync (Dosyaları Güncelle)</a>
     <a href="?cmd=migrate" class="btn btn-danger" onclick="return confirm('Veritabanı tablolarını güncellemek istediğinize emin misiniz?');">🗄️ Veritabanı Güncelle (Migrate)</a>
     <a href="?cmd=seed" class="btn btn-success" onclick="return confirm('Veritabanına örnek verileri yüklemek istediğinize emin misiniz?');">🌱 Veritabanı Seed (Örnek Veri)</a>
     

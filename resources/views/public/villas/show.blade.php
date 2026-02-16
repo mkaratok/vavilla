@@ -6,18 +6,20 @@
 
 <!-- 1. Hero / Header Slider -->
 <section class="room-detail-header position-relative" style="height: 70vh; min-height: 500px;">
-    @if($villa->images && $villa->images->count() > 0)
+    @if($villa->gorsel || ($villa->images && $villa->images->count() > 0))
     <div class="swiper room-header-slider h-100">
         <div class="swiper-wrapper">
             <!-- Main Image -->
+            @if($villa->gorsel)
             <div class="swiper-slide">
                 <div class="bg-image h-100 w-100" style="background-image: url('{{ asset('storage/villas/' . $villa->gorsel) }}'); background-size: cover; background-position: center;"></div>
                 <div class="overlay" style="position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.3);"></div>
             </div>
+            @endif
             <!-- Gallery Images -->
             @foreach($villa->images as $image)
             <div class="swiper-slide">
-                <div class="bg-image h-100 w-100" style="background-image: url('{{ asset('storage/villas/gallery/' . $image->dosya) }}'); background-size: cover; background-position: center;"></div>
+                <div class="bg-image h-100 w-100" style="background-image: url('{{ asset('storage/villas/' . $image->bresim) }}'); background-size: cover; background-position: center;"></div>
                 <div class="overlay" style="position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.3);"></div>
             </div>
             @endforeach
@@ -112,7 +114,7 @@
                         <div class="col-12 mb-3">
                             <div class="p-3 bg-dark bg-opacity-50 border border-secondary border-opacity-10 rounded text-center">
                                 <i class="fas fa-user-friends text-warning fa-2x mb-2"></i>
-                                <div class="text-white">{{ $villa->kisi_sayisi }} Kişilik</div>
+                                <div class="text-white">{{ $villa->yetiskin }} Kişilik</div>
                             </div>
                         </div>
                         
@@ -180,6 +182,48 @@
         </div>
     </div>
 </section>
+
+<!-- Gallery Carousel -->
+@if($villa->images && $villa->images->count() > 0)
+<section class="villa-gallery-section py-5" style="background-color: #0d0d0d;">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <div class="text-warning small mb-2" style="letter-spacing: 3px; text-transform: uppercase;">Fotoğraflar</div>
+            <h2 class="text-white font-cormorant">Galeri</h2>
+        </div>
+        
+        <div class="position-relative">
+            <div class="swiper villa-gallery-slider">
+                <div class="swiper-wrapper">
+                    @foreach($villa->images as $image)
+                    <div class="swiper-slide">
+                        <div class="gallery-item position-relative overflow-hidden rounded" style="height: 400px; cursor: pointer;" onclick="openLightbox('{{ asset('storage/villas/' . $image->bresim) }}')">
+                            <img src="{{ asset('storage/villas/' . $image->kresim) }}" alt="{{ $villa->baslik }}" class="w-100 h-100" style="object-fit: cover;">
+                            <div class="gallery-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0); transition: all 0.3s ease;">
+                                <i class="fas fa-search-plus text-white fa-2x" style="opacity: 0; transition: opacity 0.3s ease;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            <div class="swiper-button-prev villa-gallery-prev" style="color: var(--gold-accent);"></div>
+            <div class="swiper-button-next villa-gallery-next" style="color: var(--gold-accent);"></div>
+        </div>
+        <div class="swiper-pagination villa-gallery-pagination mt-4 text-center"></div>
+    </div>
+</section>
+
+<!-- Lightbox -->
+<div id="galleryLightbox" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:99999; cursor:pointer;" onclick="closeLightbox()">
+    <div class="d-flex align-items-center justify-content-center h-100 p-4">
+        <img id="lightboxImage" src="" alt="" style="max-width:90%; max-height:90%; object-fit:contain; border-radius:8px;">
+    </div>
+    <button style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;" onclick="closeLightbox()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+@endif
 
 <!-- 3. Similar Rooms -->
 @if(isset($similarVillas) && $similarVillas->count() > 0)
@@ -325,41 +369,55 @@
     .form-control:focus { background-color: rgba(255,255,255,0.05); color: #fff; border-color: var(--gold-accent); box-shadow: none; }
     .form-select option { background-color: #000; color: #fff; }
 
-    /* Dark Theme for Flatpickr */
-    .flatpickr-calendar {
-        background: #1a1a1a !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
-        border: 1px solid #333 !important;
+    /* ===== VILLA DETAIL MOBILE ===== */
+    @media (max-width: 991px) {
+        .room-detail-header { height: 50vh !important; min-height: 350px !important; }
+        .room-details .display-5 { font-size: 2rem !important; }
+        .booking-form { padding: 25px !important; }
+        .extra-card { flex-direction: column !important; }
+        .extra-card .extra-img { width: 100% !important; height: 200px !important; }
+        .extra-card .extra-content { width: 100% !important; }
+        .bottom-area .col-lg-5.offset-lg-1 { margin-top: 30px; }
     }
-    .flatpickr-day {
-        color: #ddd !important;
+
+    @media (max-width: 576px) {
+        .room-detail-header { height: 40vh !important; min-height: 280px !important; }
+        .room-detail-header h1 { font-size: 2rem !important; }
+        .room-details .display-5 { font-size: 1.6rem !important; }
+        .policy-card { padding: 20px !important; }
+        .similar-rooms .image-wrapper { height: 280px !important; }
+        .villa-gallery-section .gallery-item { height: 280px !important; }
     }
-    .flatpickr-day:hover {
-        background: #333 !important;
+
+    /* Gallery Carousel */
+    .gallery-item:hover .gallery-overlay {
+        background: rgba(0,0,0,0.4) !important;
     }
-    .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
-        background: var(--gold-accent) !important;
-        color: #000 !important;
-        border-color: var(--gold-accent) !important;
+    .gallery-item:hover .gallery-overlay i {
+        opacity: 1 !important;
     }
-    .flatpickr-months .flatpickr-month {
-        background: #1a1a1a !important;
-        color: #fff !important;
-        fill: #fff !important;
+    .villa-gallery-slider .swiper-slide {
+        transition: transform 0.3s ease;
     }
-    .flatpickr-current-month .flatpickr-monthDropdown-months,
-    .flatpickr-current-month input.cur-year {
-        color: #fff !important;
+    .swiper-button-prev.villa-gallery-prev,
+    .swiper-button-next.villa-gallery-next {
+        top: 50%;
+        width: 44px;
+        height: 44px;
+        background: rgba(26,26,26,0.8);
+        border: 1px solid rgba(197,164,126,0.3);
+        border-radius: 50%;
     }
-    .flatpickr-weekdays {
-        background: #1a1a1a !important;
+    .swiper-button-prev.villa-gallery-prev::after,
+    .swiper-button-next.villa-gallery-next::after {
+        font-size: 16px;
     }
-    span.flatpickr-weekday {
-        color: #888 !important;
+    .villa-gallery-pagination .swiper-pagination-bullet {
+        background: rgba(255,255,255,0.3);
+        opacity: 1;
     }
-    .flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month {
-        color: #fff !important;
-        fill: #fff !important;
+    .villa-gallery-pagination .swiper-pagination-bullet-active {
+        background: var(--gold-accent);
     }
 </style>
 @endpush
@@ -390,13 +448,13 @@
     // Initialize Flatpickr (Datepicker) - Linked for villa detail form
     document.addEventListener('DOMContentLoaded', function() {
         const checkinVillaDetail = flatpickr("#checkin_villa_detail", {
-            locale: "tr",
-            dateFormat: "Y-m-d",
-            minDate: "today",
-            // defaultDate: "today", // Removed per user preference
+            locale: typeof flatpickr.l10ns.tr !== 'undefined' ? 'tr' : 'default',
+            dateFormat: "d.m.Y",
             altInput: true,
-            altFormat: "d F Y",
-            theme: "dark",
+            altFormat: "d.m.Y",
+            minDate: "today",
+            disableMobile: true,
+            appendTo: document.body,
             onChange: function(selectedDates, dateStr, instance) {
                 if (selectedDates.length > 0) {
                     const nextDay = new Date(selectedDates[0]);
@@ -412,14 +470,53 @@
         });
         
         const checkoutVillaDetail = flatpickr("#checkout_villa_detail", {
-            locale: "tr",
-            dateFormat: "Y-m-d",
-            minDate: "today",
-            // defaultDate: "today", // Removed per user preference
+            locale: typeof flatpickr.l10ns.tr !== 'undefined' ? 'tr' : 'default',
+            dateFormat: "d.m.Y",
             altInput: true,
-            altFormat: "d F Y",
-            theme: "dark"
+            altFormat: "d.m.Y",
+            minDate: "today",
+            disableMobile: true,
+            appendTo: document.body
         });
+    });
+
+    // Villa Gallery Carousel
+    if (document.querySelector('.villa-gallery-slider')) {
+        new Swiper('.villa-gallery-slider', {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            loop: true,
+            autoplay: {
+                delay: 3500,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.villa-gallery-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.villa-gallery-next',
+                prevEl: '.villa-gallery-prev',
+            },
+            breakpoints: {
+                576: { slidesPerView: 2 },
+                992: { slidesPerView: 3 },
+            },
+        });
+    }
+
+    // Lightbox
+    function openLightbox(src) {
+        document.getElementById('lightboxImage').src = src;
+        document.getElementById('galleryLightbox').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+        document.getElementById('galleryLightbox').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeLightbox();
     });
 </script>
 @endpush

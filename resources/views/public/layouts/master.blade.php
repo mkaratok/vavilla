@@ -325,10 +325,12 @@
             font-size: 13px;
         }
 
-        @media (max-width: 991px) {
-            .main-nav { display: none; } /* Add mobile menu logic later if needed */
-            .mobile-toggle { display: block; }
-            .header-cta { display: none; }
+        /* ===== MOBILE NAV (body-level element) ===== */
+        .mobile-nav {
+            display: none;
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
 
         /* ===== FLOATING WHATSAPP BUTTON ===== */
@@ -426,6 +428,197 @@
             }
         }
 
+        /* ===== MOBILE MENU ===== */
+        @media (max-width: 991px) {
+            .desktop-nav {
+                display: none !important;
+            }
+
+            .mobile-nav {
+                display: flex;
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 300px;
+                height: 100vh;
+                background: rgba(17, 17, 17, 0.98);
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 80px 30px 30px;
+                gap: 0;
+                z-index: 9999;
+                transform: translateX(100%);
+                transition: transform 0.4s ease, visibility 0.4s ease;
+                overflow-y: auto;
+                box-shadow: -5px 0 30px rgba(0,0,0,0.5);
+                border-left: 1px solid rgba(197, 164, 126, 0.2);
+                visibility: hidden;
+            }
+
+            .mobile-nav.active {
+                transform: translateX(0);
+                visibility: visible;
+            }
+
+            .mobile-nav li {
+                width: 100%;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
+
+            .mobile-nav a {
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                padding: 15px 0;
+                font-size: 14px;
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                display: block;
+                width: 100%;
+                transition: color 0.3s ease;
+            }
+
+            .mobile-nav a:hover,
+            .mobile-nav a.active {
+                color: var(--gold-accent);
+            }
+
+            .mobile-toggle {
+                display: block;
+                z-index: 10001;
+                position: relative;
+            }
+
+            .header-cta { display: none; }
+
+            /* Mobile menu overlay */
+            .mobile-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.6);
+                z-index: 9998;
+            }
+
+            .mobile-overlay.active {
+                display: block;
+            }
+
+            /* Mobile CTA inside nav */
+            .mobile-nav-cta {
+                margin-top: 20px;
+                border-bottom: none !important;
+            }
+
+            .mobile-nav-cta .btn-reserve {
+                display: block;
+                text-align: center;
+                background-color: var(--gold-accent);
+                color: #000 !important;
+                padding: 15px;
+                text-transform: uppercase;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 1px;
+                text-decoration: none;
+                transition: all 0.3s ease;
+            }
+
+            /* Header adjustments */
+            .header-container {
+                padding: 0 15px;
+            }
+
+            .logo a {
+                font-size: 22px;
+                letter-spacing: 1px;
+            }
+
+            .main-header {
+                padding: 15px 0;
+            }
+
+            .main-header.scrolled {
+                padding: 10px 0;
+            }
+        }
+
+        /* ===== FOOTER RESPONSIVE ===== */
+        @media (max-width: 991px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .footer-col {
+                min-width: 100% !important;
+                flex: unset !important;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .main-footer {
+                padding: 50px 0 20px;
+            }
+        }
+
+        /* ===== SMALL SCREENS ===== */
+        @media (max-width: 576px) {
+            .logo a {
+                font-size: 18px;
+            }
+
+            .section-title h2,
+            h2 {
+                font-size: 32px !important;
+            }
+
+            .section-subtitle {
+                font-size: 16px;
+            }
+
+            .btn-gold, .btn-outline-gold {
+                padding: 12px 20px;
+                font-size: 12px;
+            }
+        }
+
+        /* ===== GLOBAL FLATPICKR DARK/GOLD THEME ===== */
+        .flatpickr-calendar {
+            background: #1a1a1a !important;
+            border: 1px solid rgba(197, 164, 126, 0.3) !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+            z-index: 99999 !important;
+        }
+        .flatpickr-calendar.open { display: block !important; }
+        .flatpickr-day { color: rgba(255,255,255,0.7) !important; }
+        .flatpickr-day:hover { background: #333 !important; color: #fff !important; }
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange { background: var(--gold-accent) !important; border-color: var(--gold-accent) !important; color: #000 !important; }
+        .flatpickr-day.inRange { background: rgba(197, 164, 126, 0.2) !important; color: #fff !important; }
+        .flatpickr-day.today { border-color: var(--gold-accent) !important; }
+        .flatpickr-day.disabled { color: #555 !important; background: transparent !important; cursor: not-allowed !important; opacity: 0.5 !important; }
+        .flatpickr-months .flatpickr-month { background: #1a1a1a !important; color: var(--gold-accent) !important; fill: var(--gold-accent) !important; border-bottom: 1px solid rgba(197, 164, 126, 0.1) !important; }
+        .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-current-month input.cur-year { color: var(--gold-accent) !important; font-weight: 600; }
+        .flatpickr-current-month .flatpickr-monthDropdown-months:hover,
+        .flatpickr-current-month input.cur-year:hover { background: rgba(197, 164, 126, 0.1); }
+        .flatpickr-weekdays { background: #1a1a1a !important; }
+        span.flatpickr-weekday { color: rgba(197, 164, 126, 0.6) !important; }
+        .flatpickr-months .flatpickr-prev-month,
+        .flatpickr-months .flatpickr-next-month { color: var(--gold-accent) !important; fill: var(--gold-accent) !important; }
+        .flatpickr-months .flatpickr-prev-month:hover svg,
+        .flatpickr-months .flatpickr-next-month:hover svg { fill: #fff !important; }
+        .flatpickr-input, .datepicker { cursor: pointer !important; touch-action: manipulation; }
+
         @stack('styles')
     </style>
 </head>
@@ -437,8 +630,8 @@
                 <a href="{{ url('/') }}">Vavilla Çeşme</a>
             </div>
             
-            <nav>
-                <ul class="main-nav" id="main-nav">
+            <nav class="desktop-nav">
+                <ul class="main-nav" id="desktop-nav-list">
                     <li><a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Anasayfa</a></li>
                     <li><a href="{{ route('villas.index') }}" class="{{ request()->is('villalar*') ? 'active' : '' }}">Villalar & Süitler</a></li>
                     <li><a href="{{ url('/hakkimizda') }}" class="{{ request()->is('hakkimizda') ? 'active' : '' }}">Hakkımızda</a></li>
@@ -456,6 +649,19 @@
             </div>
         </div>
     </header>
+    
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobile-overlay"></div>
+    
+    <!-- Mobile Menu (outside header to prevent z-index/pointer issues) -->
+    <ul class="mobile-nav" id="main-nav">
+        <li><a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Anasayfa</a></li>
+        <li><a href="{{ route('villas.index') }}" class="{{ request()->is('villalar*') ? 'active' : '' }}">Villalar & Süitler</a></li>
+        <li><a href="{{ url('/hakkimizda') }}" class="{{ request()->is('hakkimizda') ? 'active' : '' }}">Hakkımızda</a></li>
+        <li><a href="{{ url('/galeri') }}" class="{{ request()->is('galeri') ? 'active' : '' }}">Galeri</a></li>
+        <li><a href="{{ url('/iletisim') }}" class="{{ request()->is('iletisim') ? 'active' : '' }}">İletişim</a></li>
+        <li class="mobile-nav-cta"><a href="{{ route('villas.index') }}" class="btn-reserve">REZERVASYON YAP</a></li>
+    </ul>
     
     @yield('content')
     
@@ -561,19 +767,59 @@
         });
         
         // Mobile menu toggle
-        document.getElementById('mobile-toggle').addEventListener('click', function() {
-            document.getElementById('main-nav').classList.toggle('active');
+        var mobileToggle = document.getElementById('mobile-toggle');
+        var mainNav = document.getElementById('main-nav');
+        var mobileOverlay = document.getElementById('mobile-overlay');
+
+        function openMobileMenu() {
+            mainNav.classList.add('active');
+            mobileOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            mobileToggle.querySelector('i').className = 'fas fa-times';
+        }
+
+        function closeMobileMenu() {
+            mainNav.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+            mobileToggle.querySelector('i').className = 'fas fa-bars';
+        }
+
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (mainNav.classList.contains('active')) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            });
+        }
+
+        if (mobileOverlay) {
+            mobileOverlay.addEventListener('click', function() {
+                closeMobileMenu();
+            });
+        }
+
+        // Close on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeMobileMenu();
         });
         
         // Initialize Flatpickr (Datepicker) - for generic .datepicker elements
         document.addEventListener('DOMContentLoaded', function() {
-            // Only initialize elements with .datepicker class that aren't already initialized
             var datepickerElements = document.querySelectorAll('.datepicker');
             datepickerElements.forEach(function(el) {
                 if (!el._flatpickr) {
                     flatpickr(el, {
-                        dateFormat: "Y-m-d",
-                        minDate: "today"
+                        dateFormat: "d.m.Y",
+                        altInput: true,
+                        altFormat: "d.m.Y",
+                        minDate: "today",
+                        disableMobile: true,
+                        locale: typeof flatpickr.l10ns.tr !== 'undefined' ? 'tr' : 'default',
+                        appendTo: document.body
                     });
                 }
             });

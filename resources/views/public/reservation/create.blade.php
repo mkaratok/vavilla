@@ -65,30 +65,9 @@
 }
 .form-control::placeholder { color: rgba(255,255,255,0.3) !important; }
 .form-check-input:checked { background-color: var(--gold-accent); border-color: var(--gold-accent); }
-/* Flatpickr Dark Theme Overrides */
-.flatpickr-calendar { background: #1a1a1a !important; border: 1px solid rgba(197, 164, 126, 0.2) !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important; z-index: 9999 !important; }
-.flatpickr-day { color: rgba(255,255,255,0.7) !important; font-size: 0.9rem !important; }
-.flatpickr-day:hover { background: #333 !important; color: #fff !important; }
-.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange { background: var(--gold-accent) !important; border-color: var(--gold-accent) !important; color: #000 !important; }
-.flatpickr-day.disabled { color: #555 !important; background: transparent !important; cursor: not-allowed !important; opacity: 0.5 !important; }
-.flatpickr-day.disabled:hover { background: transparent !important; }
-.flatpickr-day.inRange { background: rgba(197, 164, 126, 0.2) !important; color: #fff !important; }
-.flatpickr-day.today { border-color: var(--gold-accent) !important; }
-
-/* Header & Text Colors */
-.flatpickr-months .flatpickr-month { background: #1a1a1a !important; color: #fff !important; fill: #fff !important; border-bottom: 1px solid rgba(197, 164, 126, 0.1) !important; }
-.flatpickr-current-month .flatpickr-monthDropdown-months,
-.flatpickr-current-month input.cur-year { color: #fff !important; font-weight: 600; }
-.flatpickr-current-month .flatpickr-monthDropdown-months:hover,
-.flatpickr-current-month input.cur-year:hover { background: rgba(197, 164, 126, 0.1); }
-.flatpickr-weekdays { background: #1a1a1a !important; }
-span.flatpickr-weekday { color: rgba(197, 164, 126, 0.6) !important; font-size: 0.75rem !important; }
-
-/* Arrows */
-.flatpickr-months .flatpickr-prev-month, 
-.flatpickr-months .flatpickr-next-month { color: rgba(197, 164, 126, 0.8) !important; fill: rgba(197, 164, 126, 0.8) !important; }
-.flatpickr-months .flatpickr-prev-month:hover svg, 
-.flatpickr-months .flatpickr-next-month:hover svg { fill: var(--gold-accent) !important; }
+/* Flatpickr font size override for reservation page */
+.flatpickr-day { font-size: 0.9rem !important; }
+span.flatpickr-weekday { font-size: 0.75rem !important; }
 
 /* Breadcrumb Overrides */
 .breadcrumb-custom .breadcrumb-item a { color: rgba(255,255,255,0.7); text-decoration: none; }
@@ -353,13 +332,14 @@ span.flatpickr-weekday { color: rgba(197, 164, 126, 0.6) !important; font-size: 
         var initialCheckout = urlParams.get('cikis');
         
         const checkinReservation = flatpickr("#gelis_tarihi", {
-            locale: "tr",
-            dateFormat: "Y-m-d",
+            locale: typeof flatpickr.l10ns.tr !== 'undefined' ? 'tr' : 'default',
+            dateFormat: "d.m.Y",
+            altInput: true,
+            altFormat: "d.m.Y",
             minDate: "today",
             defaultDate: initialCheckin || null,
-            altInput: true,
-            altFormat: "d F Y",
-            theme: "dark",
+            disableMobile: true,
+            appendTo: document.body,
             onChange: function(selectedDates, dateStr, instance) {
                 if (selectedDates.length > 0) {
                     const nextDay = new Date(selectedDates[0]);
@@ -377,13 +357,14 @@ span.flatpickr-weekday { color: rgba(197, 164, 126, 0.6) !important; font-size: 
         });
         
         const checkoutReservation = flatpickr("#cikis_tarihi", {
-            locale: "tr",
-            dateFormat: "Y-m-d",
+            locale: typeof flatpickr.l10ns.tr !== 'undefined' ? 'tr' : 'default',
+            dateFormat: "d.m.Y",
+            altInput: true,
+            altFormat: "d.m.Y",
             minDate: "today",
             defaultDate: initialCheckout || null,
-            altInput: true,
-            altFormat: "d F Y",
-            theme: "dark",
+            disableMobile: true,
+            appendTo: document.body,
             onChange: function(selectedDates, dateStr, instance) {
                 calculatePrice();
                 checkAvailability();
